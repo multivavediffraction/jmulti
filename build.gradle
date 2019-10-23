@@ -3,7 +3,7 @@ plugins {
     id 'application'
     id 'eclipse'
     id 'idea'
-    id 'org.openjfx.javafxplugin' version '0.0.8'
+    id 'org.openjfx.javafxplugin'
 }
 
 repositories {
@@ -30,6 +30,14 @@ jar {
     }
 }
 
+sourceSets {
+    main {
+        resources {
+            exclude '**/*.pxml'
+        }
+    }
+}
+
 distributions {
     main {
         contents {
@@ -46,6 +54,8 @@ project(':') {
         compileOnly 'org.jetbrains:annotations:17.0.0'
 
         implementation project(path:':calculator', configuration:'jarFile')
+        implementation project(':fx-validation')
+        implementation files('fx-validation/libs/aeFXActions-0.2.0.jar')
         implementation 'org.scala-lang:scala-library:2.13.1'
 
         implementation 'org.jogamp.gluegen:gluegen-rt-main:2.3.2'
@@ -59,6 +69,35 @@ project(':') {
 //        println "Args for for $name are $options.allCompilerArgs"
 //    }
 //}
+
+File[] fileList(FileCopyDetails dir) {
+    file(dir).listFiles({file -> file.isFile() } as FileFilter).sort()
+}
+
+task prepareBundles(type: Copy) {
+    def destination = "$buildDir/generated/resources"
+    group = 'Build Setup'
+    description = 'Converts bundles from xml format into conventional'
+    from 'src/main/resources' include '**/*.pxml'
+    into destination
+    rename {String filename -> filename.replace('pxml', 'properties')}
+    eachFile {FileCopyDetails details ->
+        println "Processing file : ${details.getFile()}"
+        File src = details.getFile()
+        File dst = file(java.nio.file.Paths.get(destination, details.getPath()))
+        println "Destination file : $dst"
+        def dir = dst.parentFile
+        if (null != dir) mkdir(dir)
+        def output = new java.io.FileOutputStream(dst)
+        def props = new java.util.Properties()
+        props.loadFromXML(details.open())
+        props.store(output, "Converted from ${src.name}")
+        details.exclude()
+    }
+}
+
+tasks.processResources.from "$buildDir/generated/resources"
+tasks.processResources.dependsOn prepareBundles
 
 wrapper {
     gradleVersion = '5.6.3'

@@ -1,5 +1,7 @@
 package org.structureviewer;
 
+import com.aeonium.javafx.validation.annotations.FXNumber;
+import com.aeonium.javafx.validation.annotations.FXValidationChecked;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.event.ActionEvent;
@@ -26,21 +28,39 @@ public class StructureViewerController implements Initializable {
     @FXML private Slider unitCellsSlider;
     @FXML private Button calculateBtn;
     @FXML private TextArea logView;
-    @FXML private TextField hInput;
-    @FXML private TextField kInput;
-    @FXML private TextField lInput;
-    @FXML private TextField psiStartInput;
-    @FXML private TextField psiEndInput;
-    @FXML private TextField psiStepsInput;
-    @FXML private TextField beamEnergyInput;
+    @FXML private Label hInputLabel;
+    @FXNumber @FXML private TextField hInput;
+    @FXML private Label kInputLabel;
+    @FXNumber @FXML private TextField kInput;
+    @FXML private Label lInputLabel;
+    @FXNumber @FXML private TextField lInput;
+    @FXML private Label psiStartLabel;
+    @FXNumber @FXML private TextField psiStartInput;
+    @FXML private Label psiEndLabel;
+    @FXNumber @FXML private TextField psiEndInput;
+    @FXML private Label psiStepsLabel;
+    @FXNumber @FXML private TextField psiStepsInput;
+    @FXML private Label beamEnergyLabel;
+    @FXNumber @FXML private TextField beamEnergyInput;
+    @FXML private Label titleLabel;
     @FXML private TextField titleInput;
-    @FXML private TextField aInput;
-    @FXML private TextField bInput;
-    @FXML private TextField cInput;
-    @FXML private TextField alphaInput;
-    @FXML private TextField betaInput;
-    @FXML private TextField gammaInput;
+    @FXML private Label aLabel;
+    @FXNumber @FXML private TextField aInput;
+    @FXML private Label bLabel;
+    @FXNumber @FXML private TextField bInput;
+    @FXML private Label cLabel;
+    @FXNumber @FXML private TextField cInput;
+    @FXML private Label alphaLabel;
+    @FXNumber @FXML private TextField alphaInput;
+    @FXML private Label betaLabel;
+    @FXNumber @FXML private TextField betaInput;
+    @FXML private Label gammaLabel;
+    @FXNumber @FXML private TextField gammaInput;
     @FXML private TableView<?> atomsDataTable;
+
+    @FXValidationChecked
+    private BooleanProperty isValidated = new SimpleBooleanProperty(true);
+    private BooleanProperty isComputing = new SimpleBooleanProperty(false);
 
     private IntegerProperty unitCellsCount = new SimpleIntegerProperty(1);
 
@@ -53,7 +73,7 @@ public class StructureViewerController implements Initializable {
     private IntegerProperty psiSteps = new SimpleIntegerProperty(360);
 
     private DoubleProperty energy = new SimpleDoubleProperty(4.5);
-    private StringProperty title = new SimpleStringProperty("defaut");
+    private StringProperty title = new SimpleStringProperty("default");
 
     private DoubleProperty a = new SimpleDoubleProperty(2.0);
     private DoubleProperty b = new SimpleDoubleProperty(2.0);
@@ -63,27 +83,31 @@ public class StructureViewerController implements Initializable {
     private DoubleProperty beta = new SimpleDoubleProperty(90.0);
     private DoubleProperty gamma = new SimpleDoubleProperty(90.0);
 
-    private TextFormatter<Integer> integerFormatter() {
-        return new TextFormatter<>(change ->
-                (change.getControlNewText().matches("[+-]?[0-9]*")) ? change : null);
-    }
-
-    private TextFormatter<Double> doubleFormatter(){
-        return new TextFormatter<>(change ->
-                (change.getControlNewText().matches("[+-]?[0-9]*\\.?[0-9]*")) ? change : null);
-    }
-
     @Override
     public void initialize(URL location, ResourceBundle resources){
+        hInputLabel.setLabelFor(hInput);
+        kInputLabel.setLabelFor(kInput);
+        lInputLabel.setLabelFor(lInput);
+        psiStartLabel.setLabelFor(psiStartInput);
+        psiEndLabel.setLabelFor(psiEndInput);
+        psiStepsLabel.setLabelFor(psiStepsInput);
+        beamEnergyLabel.setLabelFor(beamEnergyInput);
+        titleLabel.setLabelFor(titleInput);
+        aLabel.setLabelFor(aInput);
+        bLabel.setLabelFor(bInput);
+        cLabel.setLabelFor(cInput);
+        alphaLabel.setLabelFor(alphaInput);
+        betaLabel.setLabelFor(betaInput);
+        gammaLabel.setLabelFor(gammaInput);
+
+        calculateBtn.disableProperty().bind(isValidated.not().or(isComputing));
+
         unitCellsSlider.valueProperty().bindBidirectional(unitCellsCount);
-        //unitCellsDisplay.textProperty().bind(Bindings.format("Number of unit cells: %d", unitCellsCount));
+        unitCellsDisplay.textProperty().bind(Bindings.format("Number of unit cells: %d", unitCellsCount));
 
         hInput.textProperty().bindBidirectional(h, new NumberStringConverter());
-        hInput.setTextFormatter(integerFormatter());
         kInput.textProperty().bindBidirectional(k, new NumberStringConverter());
-        kInput.setTextFormatter(integerFormatter());
         lInput.textProperty().bindBidirectional(l, new NumberStringConverter());
-        lInput.setTextFormatter(integerFormatter());
 
         psiStartInput.textProperty().bindBidirectional(psiStart, new NumberStringConverter());
         psiEndInput.textProperty().bindBidirectional(psiEnd, new NumberStringConverter());
@@ -128,7 +152,8 @@ public class StructureViewerController implements Initializable {
 
     @FXML
     private void onCalculate(ActionEvent action){
-        calculateBtn.setDisable(true);
+        //calculateBtn.setDisable(true);
+        isComputing.set(true);
         System.out.println("Calculation started");
 
         var parameters = new CalcParams(psiStart.get(), psiEnd.get(), psiSteps.get(),
@@ -141,6 +166,6 @@ public class StructureViewerController implements Initializable {
                 Calc$.MODULE$.apply(unitCell, atoms, parameters);
         });
 
-        calc.thenRun(() -> calculateBtn.setDisable(false));
+        calc.thenRun(() -> isComputing.set(false));
     }
 }

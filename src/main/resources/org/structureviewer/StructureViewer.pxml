@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>StructureViewer.properties</comment>
+    <entry key="unit.cell.display.count.format">Number of unit cells: %d</entry>
+    <entry key="open.btn.text">Open...</entry>
+    <entry key="calc.btn.text">Calculate</entry>
+    <entry key="h.label.text">h:</entry>
+    <entry key="k.label.text">k:</entry>
+    <entry key="l.label.text">l:</entry>
+    <entry key="psi.start.label.text">Psi start:</entry>
+    <entry key="psi.end.label.text">end:</entry>
+    <entry key="psi.steps.label.text">steps:</entry>
+    <entry key="energy.start.label.text">Beam energy:</entry>
+    <entry key="energy.end.label.text">end:</entry>
+    <entry key="energy.steps.label.text">steps:</entry>
+    <entry key="title.label.text">Title:</entry>
+    <entry key="a.label.text">a:</entry>
+    <entry key="b.label.text">b:</entry>
+    <entry key="c.label.text">c:</entry>
+    <entry key="alpha.label.text">alpha:</entry>
+    <entry key="beta.label.text">beta:</entry>
+    <entry key="gamma.label.text">gamma:</entry>
+    <entry key="table.column.color">Color</entry>
+    <entry key="table.column.atom">Atom</entry>
+    <entry key="table.column.oxidation">Oxidation</entry>
+    <entry key="table.column.x">x</entry>
+    <entry key="table.column.y">y</entry>
+    <entry key="table.column.z">z</entry>
+</properties>

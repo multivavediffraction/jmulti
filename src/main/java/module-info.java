@@ -5,9 +5,11 @@ module org.structureviewer {
         requires javafx.controls;
         requires javafx.fxml;
         requires org.jmulti;
+        requires javafx.validations;
+        requires aeFXActions;
         requires jmol;
         requires jogl.all;
 
         exports org.structureviewer;
-        opens org.structureviewer to javafx.fxml;
+        opens org.structureviewer;
 }

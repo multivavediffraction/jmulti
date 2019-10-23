@@ -1,0 +1,3 @@
+[submodule "fx-validation"]
+	path = fx-validation
+	url = https://github.com/iSerge/fx-validation.git
