@@ -1,0 +1,66 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'eclipse'
+    id 'idea'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = 1.11
+targetCompatibility = 1.11
+version = '0.2'
+def mainClass = 'org.structureviewer.StructureViewerFX'
+mainClassName = "org.structureviewer/$mainClass"
+
+javafx {
+    version = "13"
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Simulation of Bragg X-ray diffraction in crystalline structures',
+                   'Implementation-Version': project.version,
+//                   'Class-Path': configurations.runtime.collect { it.getName() }.join(' '),
+                   'Main-Class': mainClass
+    }
+}
+
+distributions {
+    main {
+        contents {
+            from("$projectDir/tables") {
+                into "tables"
+                include '*.csv'
+            }
+        }
+    }
+}
+
+project(':') {
+    dependencies {
+        compileOnly 'org.jetbrains:annotations:17.0.0'
+
+        implementation project(path:':calculator', configuration:'jarFile')
+        implementation 'org.scala-lang:scala-library:2.13.1'
+
+        implementation 'org.jogamp.gluegen:gluegen-rt-main:2.3.2'
+        implementation 'org.jogamp.jogl:jogl-all-main:2.3.2'
+        implementation 'net.sourceforge.jmol:jmol:14.29.27'
+    }
+}
+
+//tasks.withType(JavaCompile) {
+//    doFirst {
+//        println "Args for for $name are $options.allCompilerArgs"
+//    }
+//}
+
+wrapper {
+    gradleVersion = '5.6.3'
+}
+

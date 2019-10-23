@@ -1,0 +1,2 @@
+load ..\SiO2\Quartz.cif {555 555 -1}
+delete (within(0, hkl, {1 0 0}) or within(0, hkl, {0 1 0}) or within(0, hkl, {0 0 1}))

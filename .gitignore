@@ -26,3 +26,5 @@ gradle-app.setting
 # Cache of project
 .gradletasknamecache
 
+*.cif
+SiO2 graph compare.xlsx

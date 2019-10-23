@@ -1,0 +1,39 @@
+plugins {
+    id 'java-library'
+    id 'scala'
+    id 'base'
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = 1.11
+targetCompatibility = 1.11
+version = '0.2'
+
+//tasks.compileJava.dependsOn compileScala
+//tasks.compileScala.dependsOn.remove("compileJava")
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Computation module for simulation of Bragg X-ray diffraction in crystalline structures.',
+                   'Implementation-Version': project.version,
+                   'Automatic-Module-Name': 'org.jmulti'
+    }
+}
+
+configurations {
+    jarFile
+}
+
+artifacts {
+    jarFile jar
+}
+
+dependencies {
+    api 'org.scala-lang:scala-library:2.13.1'
+
+    testImplementation 'org.scalatest:scalatest_2.13:3.0.8'
+    testImplementation 'junit:junit:4.12'
+}

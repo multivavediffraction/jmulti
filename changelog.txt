@@ -1,0 +1,5 @@
+0.1
+ - First working prototype
+0.2
+ - Switched to JavaFX UI from Swing
+
