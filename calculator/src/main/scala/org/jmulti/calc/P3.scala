@@ -1,6 +1,7 @@
 package org.jmulti.calc
 
 class P3(val x: Double, val y:Double, val z:Double) {
+  def update(x:Double = x, y:Double = y, z:Double = z) = P3(x, y, z)
   def plus(v: P3): P3 = {
     P3(x + v.x, y + v.y, z + v.z)
   }

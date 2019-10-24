@@ -15,11 +15,18 @@ object AtomicFactor {
 
   def loadTable[T](file:String)(f: ((String, Int))=>T): Seq[T] = {
     import Control._
+    Logger.log(s"Loading table: $file")
 
     val stream = new FileInputStream(file)
-    using(Source.fromInputStream(stream)) { source => {
-      source.getLines.zipWithIndex.drop(1).toList map f
-    }}
+    if (null != stream) {
+      using(Source.fromInputStream(stream)) { source => {
+        source.getLines.zipWithIndex.drop(1).toList map f
+      }}
+    } else {
+      Logger.log(s"Failed to read $file")
+      Logger.log(s"Current dir: ${new java.io.File(".").getAbsolutePath}")
+      List()
+    }
   }
   /**
    * Table 6.1.1.4

@@ -1,6 +1,7 @@
 plugins {
     id 'java-library'
     id 'scala'
+    id 'org.javamodularity.moduleplugin'
     id 'base'
 }
 
@@ -11,9 +12,6 @@ repositories {
 sourceCompatibility = 1.11
 targetCompatibility = 1.11
 version = '0.2'
-
-//tasks.compileJava.dependsOn compileScala
-//tasks.compileScala.dependsOn.remove("compileJava")
 
 jar {
     manifest {

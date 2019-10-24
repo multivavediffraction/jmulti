@@ -23,7 +23,7 @@
          </BorderPane.margin>
       </TextArea>
    </bottom>
-   <right>
+   <center>
       <VBox spacing="6.0" BorderPane.alignment="CENTER">
          <children>
             <GridPane hgap="3.0" vgap="3.0">
@@ -72,7 +72,7 @@
                   <TextField fx:id="psiEndInput" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                   <Label fx:id="psiStepsLabel" text="%psi.steps.label.text" GridPane.columnIndex="4" GridPane.rowIndex="1" />
                   <TextField fx:id="psiStepsInput" GridPane.columnIndex="5" GridPane.rowIndex="1" />
-                  <Label fx:id="beamEnergyLabel" text="%energy.start.label.text" GridPane.rowIndex="2" />
+                  <Label fx:id="startEnergyLabel" text="%energy.start.label.text" GridPane.rowIndex="2" />
                   <TextField fx:id="beamEnergyInput" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <Label fx:id="titleLabel" text="%title.label.text" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                   <TextField fx:id="titleInput" GridPane.columnIndex="3" GridPane.columnSpan="2147483647" GridPane.rowIndex="2" />
@@ -92,12 +92,12 @@
             </GridPane>
             <TableView fx:id="atomsDataTable" minHeight="100.0" prefHeight="200.0">
               <columns>
-                <TableColumn editable="false" prefWidth="75.0" text="%table.column.color" />
-                  <TableColumn prefWidth="75.0" text="%table.column.atom" />
-                <TableColumn prefWidth="75.0" text="%table.column.oxidation" />
-                  <TableColumn prefWidth="75.0" text="%table.column.x" />
-                  <TableColumn prefWidth="75.0" text="%table.column.y" />
-                  <TableColumn prefWidth="75.0" text="%table.column.z" />
+                  <TableColumn fx:id="atomColorCol" editable="false" prefWidth="75.0" text="%table.column.color" />
+                  <TableColumn fx:id="atomNameCol" prefWidth="75.0" text="%table.column.atom" />
+                  <TableColumn fx:id="atomChargeCol" prefWidth="75.0" text="%table.column.oxidation" />
+                  <TableColumn fx:id="atomXCol" prefWidth="75.0" text="%table.column.x" />
+                  <TableColumn fx:id="atomYCol" prefWidth="75.0" text="%table.column.y" />
+                  <TableColumn fx:id="atomZCol" prefWidth="75.0" text="%table.column.z" />
               </columns>
             </TableView>
          </children>
@@ -105,8 +105,8 @@
             <Insets bottom="3.0" left="6.0" right="6.0" top="6.0" />
          </BorderPane.margin>
       </VBox>
-   </right>
-   <center>
-      <Pane minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
    </center>
+   <left>
+      <Pane minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+   </left>
 </BorderPane>

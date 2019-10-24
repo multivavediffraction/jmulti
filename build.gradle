@@ -66,13 +66,9 @@ project(':') {
 
 //tasks.withType(JavaCompile) {
 //    doFirst {
-//        println "Args for for $name are $options.allCompilerArgs"
+//        println "Args for $name are $options.allCompilerArgs"
 //    }
 //}
-
-File[] fileList(FileCopyDetails dir) {
-    file(dir).listFiles({file -> file.isFile() } as FileFilter).sort()
-}
 
 task prepareBundles(type: Copy) {
     def destination = "$buildDir/generated/resources"

@@ -14,9 +14,10 @@ import scala.util.{Failure, Success, Try}
  */
 object DispersionCorrectionFS {
 
-  def loadTable: Map[String, Array[(Double, Complex)]] = {
+  def loadTable(file:String): Map[String, Array[(Double, Complex)]] = {
     import Control._
 
+    Logger.log(s"Loading table: $file")
     def double(line:Int)(str:String):Double = {
       try {
         str.toDouble
@@ -27,27 +28,32 @@ object DispersionCorrectionFS {
       }
     }
 
-
-    val stream = new FileInputStream("tables/ict.c.4268.csv")
-    using(Source.fromInputStream(stream)) { source => {
-      val lines = source.getLines.zipWithIndex.toList
-      val energies = lines.head._1.split(";").drop(2).map(double(1))
-      val even = lines.tail.filter {case (_, i) => i % 2 == 0}
-      val odd = lines.tail.filter {case (_, i) => i % 2 == 1}
-      odd.zip(even) map {
-        case ((s1, line1), (s2, line2)) =>
-          val t1 = s1.split(";")
-          val t2 = s2.split(";")
-          val values = t1.drop(2).map(double(line1)).zip(t2.drop(2).map(double(line2))) map {
-            case (a,b) => Complex(a,b)
-          }
-          t1(0) -> energies.zip(values)
+    val stream = new FileInputStream(file)
+    if (null != stream) {
+      using(Source.fromInputStream(stream)) { source => {
+        val lines = source.getLines.zipWithIndex.toList
+        val energies = lines.head._1.split(";").drop(2).map(double(1))
+        val even = lines.tail.filter { case (_, i) => i % 2 == 0 }
+        val odd = lines.tail.filter { case (_, i) => i % 2 == 1 }
+        odd.zip(even) map {
+          case ((s1, line1), (s2, line2)) =>
+            val t1 = s1.split(";")
+            val t2 = s2.split(";")
+            val values = t1.drop(2).map(double(line1)).zip(t2.drop(2).map(double(line2))) map {
+              case (a, b) => Complex(a, b)
+            }
+            t1(0) -> energies.zip(values)
+        }
       }
-    }}.toMap
-
+      }.toMap
+    } else {
+      Logger.log(s"Failed to read $file")
+      Logger.log(s"Current dir: ${new java.io.File(".").getAbsolutePath}")
+      Map()
+    }
   }
 
-  lazy val corrections: Map[String, Array[(Double, Complex)]] = loadTable
+  lazy val corrections: Map[String, Array[(Double, Complex)]] = loadTable("tables/ict.c.4268.csv")
 
 //  lazy val corrections: Map[String, Array[(Double, Complex)]] =
 //    Map("Si" -> Array((2.74851,Complex(0.3921,0.9619)),(2.28962, Complex(0.3647,0.6921)), (1.93597,Complex(0.3209,0.5081))),

@@ -36,7 +36,8 @@ public class StructureViewerFX extends Application {
 
         try {
             Parent root = fxmlLoader.load();
-            Scene scene = new Scene(root);
+            StructureViewerController controller = fxmlLoader.getController();
+            Scene scene = controller.setStage(stage);
 
             // Add the validation stylesheet - if you have not done so in the FXML
             scene.getStylesheets().add("/com/aeonium/javafx/validation/aeFXValidation.css");
@@ -53,7 +54,6 @@ public class StructureViewerFX extends Application {
             } catch (ValidationException e) {
                 e.printStackTrace();
             }
-            stage.setScene(scene);
             stage.show();
         } catch (IOException ex) {
             System.out.print("Failed to load fxml resource: ");
