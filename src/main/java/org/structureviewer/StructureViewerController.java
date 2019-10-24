@@ -2,6 +2,7 @@ package org.structureviewer;
 
 import com.aeonium.javafx.validation.annotations.FXNumber;
 import com.aeonium.javafx.validation.annotations.FXValidationChecked;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.event.ActionEvent;
@@ -27,7 +28,6 @@ import org.jmulti.calc.AtomDescr;
 import org.jmulti.calc.Calc$;
 import org.jmulti.calc.SampleData$;
 
-import javax.swing.*;
 import java.io.*;
 import java.net.URL;
 import java.util.HashMap;
@@ -112,10 +112,10 @@ public class StructureViewerController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources){
         adapter = new SmarterJmolAdapter();
-        Logger.setWriter(str -> {
+        Logger.setWriter(str -> Platform.runLater(() -> {
             logView.appendText(str);
             logView.appendText(System.lineSeparator());
-        });
+        }));
 
         hInputLabel.setLabelFor(hInput);
         kInputLabel.setLabelFor(kInput);
@@ -381,13 +381,11 @@ public class StructureViewerController implements Initializable {
 
         var atoms = atomsCollection.stream().map(Atom::getDescr).toArray(AtomDescr[]::new);
 
-//        var calc = CompletableFuture.runAsync(() -> {
-//            Logger.log("In executor thread before starting calculation");
-//            Calc$.MODULE$.apply(unitCell, atoms, parameters);
-//        });
-//
-//        calc.thenRun(() -> isComputing.set(false));
-        Calc$.MODULE$.apply(unitCell, atoms, parameters);
-        isComputing.set(false);
+        var calc = CompletableFuture.runAsync(() -> {
+            Logger.log("In executor thread before starting calculation");
+            Calc$.MODULE$.apply(unitCell, atoms, parameters);
+        });
+
+        calc.thenRun(() -> isComputing.set(false));
     }
 }
