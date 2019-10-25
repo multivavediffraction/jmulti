@@ -13,3 +13,7 @@ P3.tripleProduct(c,a,b)
 
 "+3".toInt
 "-3".toInt
+
+val steps = 0
+
+1 to (steps + 1)

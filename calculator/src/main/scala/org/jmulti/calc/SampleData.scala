@@ -1,11 +1,12 @@
 package org.jmulti.calc
 
-import org.jmulti.{CalcParams, UnitCell}
+import org.jmulti.{CalcParams, ParametersSweep, UnitCell}
 
 object SampleData {
   val unitCell: UnitCell = new UnitCell(4.91410000, 8.51147087, 5.40600000, 90.0, 90.0, 90.0)
 
-  val params: CalcParams = new CalcParams(0,40,20, 0,0,2, 4.51100000, "SiO2-ortho")
+  val params: CalcParams = new CalcParams(0,40,20, 0,0,2, 4.51100000,
+    4.51100000,1,"SiO2-ortho", ParametersSweep.PSI, false)
 
   val atoms: Array[AtomDescr] = Array(
     AtomDescr("Si", 4, P3(0.23500000, -0.23500000, 0.33333333)),

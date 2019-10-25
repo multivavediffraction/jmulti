@@ -1,6 +1,7 @@
 package org.structureviewer;
 
 import org.jmulti.CalcParams;
+import org.jmulti.ParametersSweep;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,7 +27,7 @@ public class ParametersPane {
         psiEndField.setText(String.valueOf(params.psiEnd));
         psiStepsField.setText(String.valueOf(params.psiSteps));
 
-        energyField.setText(String.valueOf(params.energy));
+        energyField.setText(String.valueOf(params.energyStart));
         titleField.setText(params.title);
     }
 
@@ -39,7 +40,10 @@ public class ParametersPane {
                 Integer.parseInt(kField.getText()),
                 Integer.parseInt(lField.getText()),
                 Double.parseDouble(energyField.getText()),
-                titleField.getText()
+                0.0, 0,
+                titleField.getText(),
+                ParametersSweep.PSI,
+                false
         );
     }
 

@@ -15,6 +15,10 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import org.jmulti.ParametersSweep?>
+<?import org.structureviewer.SweepCellFactory?>
 <BorderPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="800.0" prefHeight="600.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.structureviewer.StructureViewerController">
    <bottom>
       <TextArea fx:id="logView" minHeight="50.0" prefHeight="100.0" BorderPane.alignment="CENTER">
@@ -47,15 +51,17 @@
               <columnConstraints>
                 <ColumnConstraints fillWidth="false" halignment="RIGHT" hgrow="NEVER" />
                 <ColumnConstraints hgrow="ALWAYS" prefWidth="100.0" />
-                  <ColumnConstraints fillWidth="false" halignment="RIGHT" hgrow="NEVER" />
-                  <ColumnConstraints hgrow="ALWAYS" prefWidth="100.0" />
-                  <ColumnConstraints fillWidth="false" halignment="RIGHT" hgrow="NEVER" />
-                  <ColumnConstraints hgrow="ALWAYS" prefWidth="100.0" />
+                <ColumnConstraints fillWidth="false" halignment="RIGHT" hgrow="NEVER" />
+                <ColumnConstraints hgrow="ALWAYS" prefWidth="100.0" />
+                <ColumnConstraints fillWidth="false" halignment="RIGHT" hgrow="NEVER" />
+                <ColumnConstraints hgrow="ALWAYS" prefWidth="100.0" />
               </columnConstraints>
               <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
@@ -66,28 +72,35 @@
                   <TextField fx:id="kInput" GridPane.columnIndex="3" />
                   <Label fx:id="lInputLabel" text="%l.label.text" GridPane.columnIndex="4" />
                   <TextField fx:id="lInput" GridPane.columnIndex="5" />
-                  <Label fx:id="psiStartLabel" text="%psi.start.label.text" GridPane.rowIndex="1" />
-                  <TextField fx:id="psiStartInput" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <Label fx:id="psiEndLabel" text="%psi.end.label.text" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                  <TextField fx:id="psiEndInput" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                  <Label fx:id="psiStepsLabel" text="%psi.steps.label.text" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-                  <TextField fx:id="psiStepsInput" GridPane.columnIndex="5" GridPane.rowIndex="1" />
-                  <Label fx:id="startEnergyLabel" text="%energy.start.label.text" GridPane.rowIndex="2" />
-                  <TextField fx:id="beamEnergyInput" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <Label fx:id="titleLabel" text="%title.label.text" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                  <TextField fx:id="titleInput" GridPane.columnIndex="3" GridPane.columnSpan="2147483647" GridPane.rowIndex="2" />
-                  <Label id="aLbl" fx:id="aLabel" text="%a.label.text" GridPane.rowIndex="3" />
-                  <TextField fx:id="aInput" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <Label fx:id="bLabel" text="%b.label.text" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                  <TextField fx:id="bInput" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                  <Label fx:id="cLabel" text="%c.label.text" GridPane.columnIndex="4" GridPane.rowIndex="3" />
-                  <TextField fx:id="cInput" GridPane.columnIndex="5" GridPane.rowIndex="3" />
-                  <Label fx:id="alphaLabel" text="%alpha.label.text" GridPane.rowIndex="4" />
-                  <TextField fx:id="alphaInput" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                  <Label fx:id="betaLabel" text="%beta.label.text" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                  <TextField fx:id="betaInput" GridPane.columnIndex="3" GridPane.rowIndex="4" />
-                  <Label fx:id="gammaLabel" text="%gamma.label.text" GridPane.columnIndex="4" GridPane.rowIndex="4" />
-                  <TextField fx:id="gammaInput" GridPane.columnIndex="5" GridPane.rowIndex="4" />
+                  <Label fx:id="sweepParamsLabel" text="%sweep.param.label.text" GridPane.rowIndex="1" />
+                  <ComboBox fx:id="sweepParamsInput" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <CheckBox fx:id="savePeaksInput" text="%save.peaks.text" GridPane.columnIndex="3" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
+                  <Label fx:id="psiStartLabel" text="%psi.start.label.text" GridPane.rowIndex="2" />
+                  <TextField fx:id="psiStartInput" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Label fx:id="psiEndLabel" text="%psi.end.label.text" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                  <TextField fx:id="psiEndInput" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                  <Label fx:id="psiStepsLabel" text="%psi.steps.label.text" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+                  <TextField fx:id="psiStepsInput" GridPane.columnIndex="5" GridPane.rowIndex="2" />
+                  <Label fx:id="energyStartLabel" text="%energy.start.label.text" GridPane.rowIndex="3" />
+                  <TextField fx:id="energyStartInput" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Label fx:id="energyEndLabel" text="%energy.end.label.text" GridPane.columnIndex="2" GridPane.rowIndex="3"/>
+                  <TextField fx:id="energyEndInput" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                  <Label fx:id="energyStepsLabel" text="%energy.steps.label.text" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+                  <TextField fx:id="energyStepsInput" GridPane.columnIndex="5" GridPane.rowIndex="3" />
+                  <Label fx:id="titleLabel" text="%title.label.text" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                  <TextField fx:id="titleInput" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="4" />
+                  <Label id="aLbl" fx:id="aLabel" text="%a.label.text" GridPane.rowIndex="5" />
+                  <TextField fx:id="aInput" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                  <Label fx:id="bLabel" text="%b.label.text" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                  <TextField fx:id="bInput" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+                  <Label fx:id="cLabel" text="%c.label.text" GridPane.columnIndex="4" GridPane.rowIndex="5" />
+                  <TextField fx:id="cInput" GridPane.columnIndex="5" GridPane.rowIndex="5" />
+                  <Label fx:id="alphaLabel" text="%alpha.label.text" GridPane.rowIndex="6" />
+                  <TextField fx:id="alphaInput" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                  <Label fx:id="betaLabel" text="%beta.label.text" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+                  <TextField fx:id="betaInput" GridPane.columnIndex="3" GridPane.rowIndex="6" />
+                  <Label fx:id="gammaLabel" text="%gamma.label.text" GridPane.columnIndex="4" GridPane.rowIndex="6" />
+                  <TextField fx:id="gammaInput" GridPane.columnIndex="5" GridPane.rowIndex="6" />
                </children>
             </GridPane>
             <TableView fx:id="atomsDataTable" minHeight="100.0" prefHeight="200.0">

@@ -11,10 +11,14 @@
     <entry key="psi.start.label.text">Psi start:</entry>
     <entry key="psi.end.label.text">end:</entry>
     <entry key="psi.steps.label.text">steps:</entry>
-    <entry key="energy.start.label.text">Beam energy:</entry>
+    <entry key="energy.start.label.text">Start energy:</entry>
+    <entry key="energy.end.label.text">end:</entry>
+    <entry key="energy.steps.label.text">steps:</entry>
     <entry key="energy.end.label.text">end:</entry>
     <entry key="energy.steps.label.text">steps:</entry>
     <entry key="title.label.text">Title:</entry>
+    <entry key="sweep.param.label.text">Iterate  over:</entry>
+    <entry key="save.peaks.text">Save selected planes</entry>
     <entry key="a.label.text">a:</entry>
     <entry key="b.label.text">b:</entry>
     <entry key="c.label.text">c:</entry>

@@ -9,22 +9,35 @@ public class CalcParams {
     public final int k;
     public final int l;
 
-    public final double energy;
+    public final double energyStart;
+    public final double energyEnd;
+    public final int energySteps;
     public final String title;
+
+    public final ParametersSweep sweep;
+    public final boolean savePeaks;
 
     public final int namax=61;  // should be odd 59
     public final int nbmax=101; // should be odd 101
     public final int ncmax=151; // should be odd 151
 
 
-    public CalcParams(double psiStart, double psiEnd, int psiSteps, int h, int k, int l, double energy, String title){
+    public CalcParams(double psiStart, double psiEnd, int psiSteps,
+                      int h, int k, int l,
+                      double energyStart, double energyEnd, int energySteps,
+                      String title, ParametersSweep sweep, boolean savePeaks)
+    {
         this.psiStart = psiStart;
         this.psiEnd = psiEnd;
         this.psiSteps = psiSteps;
         this.h = h;
         this.k = k;
         this.l = l;
-        this.energy = energy;
+        this.energyStart = energyStart;
+        this.energyEnd = energyEnd;
+        this.energySteps = energySteps;
         this.title = title;
+        this.sweep = sweep;
+        this.savePeaks = savePeaks;
     }
 }
