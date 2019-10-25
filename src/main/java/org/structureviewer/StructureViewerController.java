@@ -34,6 +34,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
 
 import static org.structureviewer.Utils.epsilonEquals;
 
@@ -431,6 +432,9 @@ public class StructureViewerController implements Initializable {
             Calc$.MODULE$.apply(unitCell, atoms, parameters);
         });
 
-        calc.thenRun(() -> isComputing.set(false));
+        calc.thenRun(() -> {
+            Logger.log("Calculation completed");
+            Platform.runLater(() -> isComputing.set(false));
+        });
     }
 }
