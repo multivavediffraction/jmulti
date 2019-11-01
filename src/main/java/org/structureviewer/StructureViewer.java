@@ -13,8 +13,7 @@ import org.jmulti.Logger;
 import org.jmulti.UnitCell;
 import org.jmulti.calc.AtomDescr;
 import org.jmulti.calc.Calc$;
-import org.jmulti.calc.SampleData;
-import org.jmulti.calc.SampleData$;
+import org.jmulti.calc.Samples;
 import org.structureviewer.StructureGLListener.ShowAtoms;
 
 import javax.swing.*;
@@ -101,7 +100,7 @@ public class StructureViewer {
         JButton calcBtn = new JButton("Calculate");
 
         JTable atomDataTable = new JTable();
-        atomsData.setAtoms(SampleData$.MODULE$.atoms());
+        atomsData.setAtoms(Samples.sampleSiO2().atoms());
         atomDataTable.setModel(atomsData);
 
         atomDataTable.setDefaultRenderer(Color.class, new DefaultTableCellRenderer() {
@@ -117,8 +116,8 @@ public class StructureViewer {
             });
 
 
-        unitCellPane.setData(SampleData.unitCell());
-        paramsPane.setParams(SampleData.params());
+        unitCellPane.setData(Samples.sampleSiO2().unitCell());
+        paramsPane.setParams(Samples.sampleSiO2().params());
 
         logView = new JTextArea();
         //logView.setEditable(false);
@@ -247,7 +246,7 @@ public class StructureViewer {
             }
         });
 
-        structureRenderer.setAtoms(SampleData.atoms(), SampleData.unitCell(), 0);
+        structureRenderer.setAtoms(Samples.sampleSiO2().atoms(), Samples.sampleSiO2().unitCell(), 0);
     }
 
     private void fillForms(AtomSetCollection atomsCollection) {

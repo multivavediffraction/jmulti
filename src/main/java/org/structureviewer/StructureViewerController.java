@@ -27,7 +27,7 @@ import org.jmulti.ParametersSweep;
 import org.jmulti.UnitCell;
 import org.jmulti.calc.AtomDescr;
 import org.jmulti.calc.Calc$;
-import org.jmulti.calc.SampleData$;
+import org.jmulti.calc.Samples;
 
 import java.io.*;
 import java.net.URL;
@@ -158,7 +158,7 @@ public class StructureViewerController implements Initializable {
 
         psiStartInput.textProperty().bindBidirectional(psiStart, new NumberStringConverter());
         psiEndInput.textProperty().bindBidirectional(psiEnd, new NumberStringConverter());
-        psiStepsInput.textProperty().bindBidirectional(psiSteps, new NumberStringConverter());
+        psiStepsInput.textProperty().bindBidirectional(psiSteps, new NumberStringConverter("#####0"));
 
         energyStartInput.textProperty().bindBidirectional(energyStart, new NumberStringConverter());
         energyEndInput.textProperty().bindBidirectional(energyEnd, new NumberStringConverter());
@@ -195,9 +195,9 @@ public class StructureViewerController implements Initializable {
         energyEndInput.disableProperty().bind(sweep.isEqualTo(ParametersSweep.PSI));
         energyStepsInput.disableProperty().bind(sweep.isEqualTo(ParametersSweep.PSI));
 
-        fillCalculationtParams(SampleData$.MODULE$.params());
-        fillUnitCellsParams(SampleData$.MODULE$.unitCell());
-        fillAtomsParameters(SampleData$.MODULE$.atoms());
+        fillCalculationtParams(Samples.sampleCuB2O4().params());
+        fillUnitCellsParams(Samples.sampleCuB2O4().unitCell());
+        fillAtomsParameters(Samples.sampleCuB2O4().atoms());
 
     }
 
