@@ -126,8 +126,7 @@ public class StructureViewerController implements Initializable {
     public void initialize(URL location, ResourceBundle resources){
         adapter = new SmarterJmolAdapter();
         Logger.setWriter(str -> Platform.runLater(() -> {
-            logView.appendText(str);
-            logView.appendText(System.lineSeparator());
+            logView.getItems().add(str);
         }));
 
         hInputLabel.setLabelFor(hInput);
@@ -406,7 +405,7 @@ public class StructureViewerController implements Initializable {
 
     @FXML
     private void onCalculate(ActionEvent action){
-        logView.clear();
+        logView.getItems().clear();
         isComputing.set(true);
         Logger.log("Staring calculation");
 
