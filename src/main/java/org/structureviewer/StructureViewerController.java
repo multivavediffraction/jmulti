@@ -43,7 +43,7 @@ public class StructureViewerController implements Initializable {
     @FXML private Label unitCellsDisplay;
     @FXML private Slider unitCellsSlider;
     @FXML private Button calculateBtn;
-    @FXML private TextArea logView;
+    @FXML private ListView<String> logView;
     @FXML private Label hInputLabel;
     @FXNumber @FXML private TextField hInput;
     @FXML private Label kInputLabel;
