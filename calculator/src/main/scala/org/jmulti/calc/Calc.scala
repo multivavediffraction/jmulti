@@ -199,9 +199,9 @@ class Calc {
           //        if fh2.normSquare >= 1.0E-6
           p = fh1 * fh2
           //        if p.normSquare >= 1.0E1 // was 5 this excludes small umweg reflections
-        } yield ((ah, bh, ch), p)
+        } yield ((ah, bh, ch), p, fh1, fh2)
       } filter {
-        case Success((_, p)) => p.normSquare >= 1.0E1
+        case Success((_, p, fh1, fh2)) => p.normSquare >= 1.0E1 && fh1.normSquare >= 1.0E-6 && fh2.normSquare >= 1.0E-6
         case _ => true
       }
 
@@ -284,7 +284,7 @@ class Calc {
         val ep1 = ep1x * a0 + ep1y * b0 + ep1z * n
         // END of wavevector and polarizations
         val f = factors.foldLeft(Success((Complex(0, 0), Complex(0, 0), Complex(0, 0), Complex(0, 0))): Try[(Complex, Complex, Complex, Complex)]) {
-          case (Success((ss, pp, ps, sp)), Success(((ah, bh, ch), fh))) =>
+          case (Success((ss, pp, ps, sp)), Success(((ah, bh, ch), fh, _, _))) =>
             //val kn2 = (kx + aRec * ah) ** 2 + (ky + bRec * bh) ** 2 + (kz + cRec * ch) ** 2 //this is \mathbf{k}_n^2
             val p = aRec * ah + bRec * bh + cRec * ch
             val kn2 = (k + p).normSquare //this is \mathbf{k}_n^2
