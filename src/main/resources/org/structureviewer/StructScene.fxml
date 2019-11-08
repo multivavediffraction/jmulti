@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="3.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.structureviewer.StructSceneController">
+    <SubScene fx:id="scene" depthBuffer="true" fill="black" height="400.0" onMouseDragged="#mouseDragged" onMouseMoved="#mouseMoved" width="400.0" VBox.vgrow="ALWAYS">
+        <antiAliasing>
+            <SceneAntialiasing fx:constant="BALANCED" />
+        </antiAliasing>
+        <root>
+            <Group fx:id="world">
+                <children>
+                    <AmbientLight color="#707070" />
+                    <PointLight color="#ffffff" translateX="50" translateY="50" translateZ="-50" />
+                </children>
+            </Group>
+        </root>
+    </SubScene>
+   <padding>
+      <Insets bottom="3.0" left="6.0" right="3.0" top="6.0" />
+   </padding>
+</VBox>

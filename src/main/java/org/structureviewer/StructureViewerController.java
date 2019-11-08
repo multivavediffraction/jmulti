@@ -87,6 +87,8 @@ public class StructureViewerController implements Initializable {
     @FXML private TableColumn<Atom, Double> atomYCol;
     @FXML private TableColumn<Atom, Double> atomZCol;
 
+    @FXML private StructSceneController structSceneController;
+
     @FXValidationChecked
     private BooleanProperty isValidated = new SimpleBooleanProperty(true);
     private BooleanProperty isComputing = new SimpleBooleanProperty(false);
@@ -198,7 +200,7 @@ public class StructureViewerController implements Initializable {
         fillCalculationtParams(Samples.sampleCuB2O4().params());
         fillUnitCellsParams(Samples.sampleCuB2O4().unitCell());
         fillAtomsParameters(Samples.sampleCuB2O4().atoms());
-
+        structSceneController.setAtoms(Samples.sampleCuB2O4().unitCell(), Samples.sampleCuB2O4().atoms());
     }
 
     private void fillAtomsParameters(AtomDescr[] atoms) {
@@ -347,6 +349,7 @@ public class StructureViewerController implements Initializable {
         System.arraycopy(atoms, 0, realAtoms, 0, realCount);
 
         fillAtomsParameters(realAtoms);
+        structSceneController.setAtoms(uc, realAtoms);
     }
 
     private AtomSetCollection loadFile(String name, int cellsNumber){

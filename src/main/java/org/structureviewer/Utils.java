@@ -12,7 +12,7 @@ public class Utils {
     @NotNull
     public static String readResource(String fileName)
     {
-        InputStream input = StructureViewer.class.getResourceAsStream(fileName);
+        InputStream input = StructureViewerFX.class.getResourceAsStream(fileName);
         if(null == input){
             throw new AssertionError("Can't find resource: " + fileName);
         }
@@ -45,6 +45,22 @@ public class Utils {
         for(int i = 0; i<n; ++i){
             for(int j = 0; j<n; ++j){
                 float r = 0.0f;
+                for(int k = 0; k<n; ++k){
+                    r += a[i*n + k]*b[k*n + j];
+                }
+                result[i*n + j] = r;
+            }
+        }
+
+        return result;
+    }
+
+    public static double[] matMul(double[] a, double[] b, int n){
+        double[] result = new double[n*n];
+
+        for(int i = 0; i<n; ++i){
+            for(int j = 0; j<n; ++j){
+                double r = 0.0f;
                 for(int k = 0; k<n; ++k){
                     r += a[i*n + k]*b[k*n + j];
                 }

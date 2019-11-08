@@ -6,12 +6,10 @@
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
@@ -41,7 +39,7 @@
               </rowConstraints>
                <children>
                   <Label fx:id="unitCellsDisplay" text="Number of unit cells: 1" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" />
-                  <Slider fx:id="unitCellsSlider" blockIncrement="1.0" majorTickUnit="1.0" max="10.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
+                  <Slider fx:id="unitCellsSlider" blockIncrement="1.0" majorTickUnit="1.0" min="1.0" max="10.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
                   <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#onOpenFile" text="%open.btn.text" GridPane.rowIndex="2" />
                   <Button fx:id="calculateBtn" minWidth="-Infinity" mnemonicParsing="false" onAction="#onCalculate" text="%calc.btn.text" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                </children>
@@ -119,6 +117,6 @@
       </VBox>
    </center>
    <left>
-      <Pane minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+       <fx:include fx:id="structScene" source="StructScene.fxml" />
    </left>
 </BorderPane>

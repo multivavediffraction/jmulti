@@ -8,6 +8,7 @@ class AtomDescr(val name:String, val charge:Int, val p:P3) {
   def updateX(x: Double): AtomDescr = AtomDescr(name, charge, p.update(x=x))
   def updateY(y: Double): AtomDescr = AtomDescr(name, charge, p.update(y=y))
   def updateZ(z: Double): AtomDescr = AtomDescr(name, charge, p.update(z=z))
+  def updateP(newP: P3): AtomDescr = AtomDescr(name, charge, newP)
 }
 
 object AtomDescr {
