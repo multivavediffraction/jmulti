@@ -163,9 +163,9 @@ class Calc {
           }
           Logger.log(s"Energy = $energy, thetab = $thetab")
         case ParametersSweep.RR2_FIELD =>
-          ()
+          Logger.log(s"Energy = $energy, thetab = $thetab")
         case ParametersSweep.RL2_FIELD =>
-          ()
+          Logger.log(s"Energy = $energy, thetab = $thetab")
       }
       //val vol=uc.a*uc.b*uc.c //A^3
       val Array(a, b, c) = uc.getUnitCellVectors
@@ -273,9 +273,9 @@ class Calc {
           case ParametersSweep.ENERGY =>
             ()
           case ParametersSweep.RR2_FIELD =>
-            Logger.log(s"Energy = $energy, Psi = $Psi")
+            ()
           case ParametersSweep.RL2_FIELD =>
-            Logger.log(s"Energy = $energy, Psi = $Psi")
+            ()
         }
 
 
