@@ -26,14 +26,14 @@ map = [linspace(0,.5,127)' linspace(0,.5,127)' linspace(1,.5,127)'
 %[I, graymap] = gray2ind(mat2gray(log(R)),255);
 lRR = log(RR);
 lRL = log(RL);
-GR = mat2gray(lRR);
-GL = mat2gray(lRL);
-DIFF = mat2gray(lRR-lRL);
-imshow(gray2ind(DIFF), map);
-%imwrite(GR, 'quartz-right-polarization.png');
-%imwrite(GL, 'quartz-left-polarization.png');
+GR = mat2gray(lRR); % requires image processing toolbox
+GL = mat2gray(lRL); % requires image processing toolbox
+DIFF = mat2gray(lRR-lRL); % requires image processing toolbox
+imshow(gray2ind(DIFF), map); % requires image processing toolbox
+%imwrite(GR, 'quartz-right-polarization.png'); % requires image processing toolbox
+%imwrite(GL, 'quartz-left-polarization.png'); % requires image processing toolbox
 %[I, graymap] = gray2ind(GR,255);
 %imshow(I, graymap);
-%image(psiL, energyL, log(RR)-log(RL), 'CDataMapping','scaled')
+%image(psiL, energyL, log(RR)-log(RL), 'CDataMapping','scaled') %  plots matrix as 2d image, no special reqirements
 %colorbar
 %colormap(map)
