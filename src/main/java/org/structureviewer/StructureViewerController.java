@@ -3,7 +3,6 @@ package org.structureviewer;
 import com.aeonium.javafx.validation.annotations.FXNumber;
 import com.aeonium.javafx.validation.annotations.FXValidationChecked;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -40,8 +39,7 @@ import static org.structureviewer.Utils.epsilonEquals;
 
 public class StructureViewerController implements Initializable {
     @FXML private BorderPane rootPane;
-    @FXML private Label unitCellsDisplay;
-    @FXML private Slider unitCellsSlider;
+    @FXML private ComboBox<String> params;
     @FXML private Button calculateBtn;
     @FXML private ListView<String> logView;
     @FXML private Label hInputLabel;
@@ -92,8 +90,6 @@ public class StructureViewerController implements Initializable {
     @FXValidationChecked
     private BooleanProperty isValidated = new SimpleBooleanProperty(true);
     private BooleanProperty isComputing = new SimpleBooleanProperty(false);
-
-    private IntegerProperty unitCellsCount = new SimpleIntegerProperty(1);
 
     private IntegerProperty h = new SimpleIntegerProperty(0);
     private IntegerProperty k = new SimpleIntegerProperty(0);
@@ -151,9 +147,6 @@ public class StructureViewerController implements Initializable {
 
         calculateBtn.disableProperty().bind(isValidated.not().or(isComputing));
 
-        unitCellsSlider.valueProperty().bindBidirectional(unitCellsCount);
-        unitCellsDisplay.textProperty().bind(Bindings.format("Number of unit cells: %d", unitCellsCount));
-
         hInput.textProperty().bindBidirectional(h, new NumberStringConverter());
         kInput.textProperty().bindBidirectional(k, new NumberStringConverter());
         lInput.textProperty().bindBidirectional(l, new NumberStringConverter());
@@ -197,10 +190,31 @@ public class StructureViewerController implements Initializable {
         energyEndInput.disableProperty().bind(sweep.isEqualTo(ParametersSweep.PSI));
         energyStepsInput.disableProperty().bind(sweep.isEqualTo(ParametersSweep.PSI));
 
-        fillCalculationtParams(Samples.sampleCuB2O4().params());
-        fillUnitCellsParams(Samples.sampleCuB2O4().unitCell());
-        fillAtomsParameters(Samples.sampleCuB2O4().atoms());
-        structSceneController.setAtoms(Samples.sampleCuB2O4().unitCell(), Samples.sampleCuB2O4().atoms());
+        params.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (null != oldValue && oldValue.equals(newValue)) {
+                return;
+            }
+
+            switch (newValue) {
+                case "SiO\u2082":
+                    fillCalculationtParams(Samples.sampleSiO2().params());
+                    fillUnitCellsParams(Samples.sampleSiO2().unitCell());
+                    fillAtomsParameters(Samples.sampleSiO2().atoms());
+                    structSceneController.setAtoms(Samples.sampleSiO2().unitCell(), Samples.sampleSiO2().atoms());
+                    break;
+                case "CuB\u2082O\u2084":
+                    fillCalculationtParams(Samples.sampleCuB2O4().params());
+                    fillUnitCellsParams(Samples.sampleCuB2O4().unitCell());
+                    fillAtomsParameters(Samples.sampleCuB2O4().atoms());
+                    structSceneController.setAtoms(Samples.sampleCuB2O4().unitCell(), Samples.sampleCuB2O4().atoms());
+                    break;
+                default:
+                    Logger.log("Unknown parameters set name " + params.getValue() + ". Selecting SiO\u2082");
+                    params.setValue("SiO\u2082");
+            }
+        });
+
+        params.setValue("SiO\u2082");
     }
 
     private void fillAtomsParameters(AtomDescr[] atoms) {
@@ -396,13 +410,9 @@ public class StructureViewerController implements Initializable {
         if(null != f){
             file = f.getAbsolutePath();
             title.set(f.getName());
-            AtomSetCollection atoms = loadFile(file, unitCellsCount.get());
+            AtomSetCollection atoms = loadFile(file, 1);
 
             fillForms(atoms);
-
-            //structureRenderer.setAtoms(atoms, cellsNumberSlider.getValue() == 0 ? StructureGLListener.ShowAtoms.UNEQUIVALENT : StructureGLListener.ShowAtoms.ALL);
-
-            //structureView.display();
         }
     }
 
