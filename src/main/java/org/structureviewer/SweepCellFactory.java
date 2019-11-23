@@ -23,11 +23,8 @@ public class SweepCellFactory implements Callback<ListView<ParametersSweep>, Lis
                         case ENERGY:
                             setText("Energy");
                             break;
-                        case RR2_FIELD:
-                            setText("Rr2 field on Psi X Energy");
-                            break;
-                        case RL2_FIELD:
-                            setText("Rl2 field on Psi X Energy");
+                        case BOTH:
+                            setText("Rr2 and Rl2 field on Psi X Energy");
                             break;
                     }
                 }

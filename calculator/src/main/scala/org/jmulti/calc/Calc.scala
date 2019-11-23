@@ -58,9 +58,7 @@ class Calc {
         s"${params.title}-(${params.h}${params.k}${params.l})-E ${params.energyStart}-psi ${params.psiStart} ${params.psiEnd} ${params.psiSteps}"
       case ParametersSweep.ENERGY  =>
         s"${params.title}-(${params.h}${params.k}${params.l})-E ${params.energyStart} ${params.energyEnd} ${params.energySteps}-psi ${params.psiStart}"
-      case ParametersSweep.RR2_FIELD =>
-        s"${params.title}-(${params.h}${params.k}${params.l})-E ${params.energyStart} ${params.energyEnd} ${params.energySteps}-psi ${params.psiStart} ${params.psiEnd} ${params.psiSteps}"
-      case ParametersSweep.RL2_FIELD =>
+      case ParametersSweep.BOTH =>
         s"${params.title}-(${params.h}${params.k}${params.l})-E ${params.energyStart} ${params.energyEnd} ${params.energySteps}-psi ${params.psiStart} ${params.psiEnd} ${params.psiSteps}"
     }
 
@@ -94,10 +92,15 @@ class Calc {
         val w = new PrintWriter (s"azim-lin-$filename.csv")
         w.println(s"Energy;fMod2ss;fMod2pp;fMod2ps;fMod2sp;fMod2s;fMod2p;fMulssRe;fMulssIm;fMulppRe;fMulppIm;fMulpsRe;fMulpsIm;fMulspRe;fMulspIm;fQQRe;fQQIm;fDQRe;fDQIm;fMagRe;fMagIm;Psi=${params.psiStart}")
         w
-      case ParametersSweep.RR2_FIELD =>
-        null
-      case ParametersSweep.RL2_FIELD =>
-        null
+      case ParametersSweep.BOTH =>
+        val w = new PrintWriter (s"Rl2-field-$filename.csv")
+        val psiValues = (1 to (params.psiSteps + 1)) map {
+          i =>
+            val psi = params.psiStart + (i - 1) * (params.psiEnd - params.psiStart) / params.psiSteps
+            psi.toString
+        }
+        w.println(s"Energy\\Psi;${psiValues.mkString(";")}")
+        w
     }
 
     val azimCirc = params.sweep match {
@@ -109,17 +112,8 @@ class Calc {
         val w = new PrintWriter (s"azim-circ-$filename.csv")
         w.println(s"Energy;Rr2;Rl2;(Rr2-Rl2)/(Rr2+Rl2);(Rr2+Rl2)/2;Psi=${params.psiStart}")
         w
-      case ParametersSweep.RR2_FIELD =>
+      case ParametersSweep.BOTH =>
         val w = new PrintWriter (s"Rr2-field-$filename.csv")
-        val psiValues = (1 to (params.psiSteps + 1)) map {
-          i =>
-            val psi = params.psiStart + (i - 1) * (params.psiEnd - params.psiStart) / params.psiSteps
-            psi.toString
-        }
-        w.println(s"Energy\\Psi;${psiValues.mkString(";")}")
-        w
-      case ParametersSweep.RL2_FIELD =>
-        val w = new PrintWriter (s"Rl2-field-$filename.csv")
         val psiValues = (1 to (params.psiSteps + 1)) map {
           i =>
             val psi = params.psiStart + (i - 1) * (params.psiEnd - params.psiStart) / params.psiSteps
@@ -136,8 +130,9 @@ class Calc {
         params.energyStart + (e - 1) * (params.energyEnd - params.energyStart) / params.energySteps
       }
 
-      if (params.sweep == ParametersSweep.RR2_FIELD || params.sweep == ParametersSweep.RL2_FIELD) {
+      if (params.sweep == ParametersSweep.BOTH) {
         azimCirc.print(s"$energy")
+        azimLin.print(s"$energy")
       }
 
       reset()
@@ -162,9 +157,7 @@ class Calc {
             Logger.log(s"${params.h}, ${params.k}, ${params.l}, $pi, $r0")
           }
           Logger.log(s"Energy = $energy, thetab = $thetab")
-        case ParametersSweep.RR2_FIELD =>
-          Logger.log(s"Energy = $energy, thetab = $thetab")
-        case ParametersSweep.RL2_FIELD =>
+        case ParametersSweep.BOTH =>
           Logger.log(s"Energy = $energy, thetab = $thetab")
       }
       //val vol=uc.a*uc.b*uc.c //A^3
@@ -272,9 +265,7 @@ class Calc {
             Logger.log(s"Psi = $Psi")
           case ParametersSweep.ENERGY =>
             ()
-          case ParametersSweep.RR2_FIELD =>
-            ()
-          case ParametersSweep.RL2_FIELD =>
+          case ParametersSweep.BOTH =>
             ()
         }
 
@@ -357,9 +348,7 @@ class Calc {
             azimLin.print(s"${fMultsp.re} ; ${fMultsp.im} ; ")
             azimLin.print(s"${cQQ.re} ; ${cQQ.im} ; ${fDQ.re} ; ${fDQ.im} ; ")
             azimLin.println(s"${fMag.re} ; ${fMag.im}")
-          case ParametersSweep.RR2_FIELD =>
-            ()
-          case ParametersSweep.RL2_FIELD =>
+          case ParametersSweep.BOTH =>
             ()
         }
 
@@ -371,10 +360,9 @@ class Calc {
             azimCirc.println(s"$Psi ; $Rr2 ; $Rl2 ; ${(Rr2 - Rl2) / (Rr2 + Rl2)} ; ${(Rr2 + Rl2) / 2.0}")
           case ParametersSweep.ENERGY =>
             azimCirc.println(s"$energy ; $Rr2 ; $Rl2 ; ${(Rr2 - Rl2) / (Rr2 + Rl2)} ; ${(Rr2 + Rl2) / 2.0}")
-          case ParametersSweep.RR2_FIELD =>
+          case ParametersSweep.BOTH =>
             azimCirc.print(s"; $Rr2")
-          case ParametersSweep.RL2_FIELD =>
-            azimCirc.print(s"; $Rl2")
+            azimLin.print(s"; $Rl2")
         }
       }
 
@@ -386,10 +374,9 @@ class Calc {
         case ParametersSweep.PSI =>
           azimLin.close()
           azimCirc.close()
-        case ParametersSweep.RR2_FIELD =>
+        case ParametersSweep.BOTH =>
           azimCirc.println()
-        case ParametersSweep.RL2_FIELD =>
-          azimCirc.println()
+          azimLin.println()
         case _ =>
           ()
       }
@@ -399,10 +386,9 @@ class Calc {
       case ParametersSweep.ENERGY =>
         azimLin.close()
         azimCirc.close()
-      case ParametersSweep.RR2_FIELD =>
+      case ParametersSweep.BOTH =>
         azimCirc.close()
-      case ParametersSweep.RL2_FIELD =>
-        azimCirc.close()
+        azimLin.close()
       case _ =>
         ()
     }
