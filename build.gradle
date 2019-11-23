@@ -12,7 +12,7 @@ repositories {
 
 sourceCompatibility = 1.11
 targetCompatibility = 1.11
-version = '0.3'
+version = '0.4'
 def mainClass = 'org.structureviewer.StructureViewerFX'
 mainClassName = "org.structureviewer/$mainClass"
 

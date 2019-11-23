@@ -2,4 +2,9 @@
  - First working prototype
 0.2
  - Switched to JavaFX UI from Swing
+0.4
+ - Loop calculation over beam energy
+ - Added ability to calcuulate 2d field over energy and psi
+ - Added capability to select one of predefined structure and simulation parameters
+ - Added view with 3d structure of atoms
 
