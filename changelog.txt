@@ -7,4 +7,5 @@
  - Added ability to calcuulate 2d field over energy and psi
  - Added capability to select one of predefined structure and simulation parameters
  - Added view with 3d structure of atoms
+0.5
 
