@@ -10,6 +10,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -254,6 +255,8 @@ public class StructureViewerController implements Initializable {
 
     public Scene setStage(Stage stage){
         primaryStage = stage;
+        InputStream icon = getClass().getResourceAsStream("app_icon.png");
+        primaryStage.getIcons().add(new Image(icon));
         var scene = new Scene(rootPane);
         stage.setScene(scene);
         return scene;
