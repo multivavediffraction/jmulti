@@ -4,6 +4,7 @@
     <comment>StructureViewer.properties</comment>
     <entry key="unit.cell.display.count.format">Number of unit cells: %d</entry>
     <entry key="open.btn.text">Open...</entry>
+    <entry key="predefined.combo.label.text">Predefined params:</entry>
     <entry key="calc.btn.text">Calculate</entry>
     <entry key="h.label.text">h:</entry>
     <entry key="k.label.text">k:</entry>
@@ -12,8 +13,6 @@
     <entry key="psi.end.label.text">end:</entry>
     <entry key="psi.steps.label.text">steps:</entry>
     <entry key="energy.start.label.text">Start energy:</entry>
-    <entry key="energy.end.label.text">end:</entry>
-    <entry key="energy.steps.label.text">steps:</entry>
     <entry key="energy.end.label.text">end:</entry>
     <entry key="energy.steps.label.text">steps:</entry>
     <entry key="title.label.text">Title:</entry>

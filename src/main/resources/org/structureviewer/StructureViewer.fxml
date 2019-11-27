@@ -41,7 +41,7 @@
                <children>
                   <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#onOpenFile" text="%open.btn.text" GridPane.rowIndex="0" />
                   <HBox alignment="BASELINE_LEFT" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS">
-                      <Label text="Predefined params:" />
+                      <Label text="%predefined.combo.label.text" />
                       <ComboBox fx:id="params">
                           <items>
                               <FXCollections fx:factory="observableArrayList">

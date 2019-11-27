@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>StructureViewer.properties</comment>
+    <entry key="unit.cell.display.count.format">Количество ячеек: %d</entry>
+    <entry key="open.btn.text">Открыть...</entry>
+    <entry key="predefined.combo.label.text">Примеры:</entry>
+    <entry key="calc.btn.text">Рассчитать</entry>
+    <entry key="h.label.text">h:</entry>
+    <entry key="k.label.text">k:</entry>
+    <entry key="l.label.text">l:</entry>
+    <entry key="psi.start.label.text">Psi с:</entry>
+    <entry key="psi.end.label.text">по:</entry>
+    <entry key="psi.steps.label.text">шаги:</entry>
+    <entry key="energy.start.label.text">Энергия с:</entry>
+    <entry key="energy.end.label.text">по:</entry>
+    <entry key="energy.steps.label.text">шаги:</entry>
+    <entry key="title.label.text">Метка:</entry>
+    <entry key="sweep.param.label.text">Цикл по:</entry>
+    <entry key="save.peaks.text">Сохранить отобранные плоскости</entry>
+    <entry key="a.label.text">a:</entry>
+    <entry key="b.label.text">b:</entry>
+    <entry key="c.label.text">c:</entry>
+    <entry key="alpha.label.text">alpha:</entry>
+    <entry key="beta.label.text">beta:</entry>
+    <entry key="gamma.label.text">gamma:</entry>
+    <entry key="table.column.color">Цвет</entry>
+    <entry key="table.column.atom">Атом</entry>
+    <entry key="table.column.oxidation">Валентность</entry>
+    <entry key="table.column.x">x</entry>
+    <entry key="table.column.y">y</entry>
+    <entry key="table.column.z">z</entry>
+</properties>
