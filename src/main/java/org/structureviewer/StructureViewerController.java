@@ -44,40 +44,55 @@ public class StructureViewerController implements Initializable {
     @FXML private Button calculateBtn;
     @FXML private ListView<String> logView;
     @FXML private Label hInputLabel;
-    @FXNumber @FXML private TextField hInput;
+    @FXNumber(validation = NumberFormatterValidator.class)
+    @FXML private TextField hInput;
     @FXML private Label kInputLabel;
-    @FXNumber @FXML private TextField kInput;
+    @FXNumber(validation = NumberFormatterValidator.class)
+    @FXML private TextField kInput;
     @FXML private Label lInputLabel;
-    @FXNumber @FXML private TextField lInput;
+    @FXNumber(validation = NumberFormatterValidator.class)
+    @FXML private TextField lInput;
     @FXML private Label sweepParamsLabel;
     @FXML private ComboBox<ParametersSweep> sweepParamsInput;
     @FXML private CheckBox savePeaksInput;
     @FXML private Label psiStartLabel;
-    @FXNumber @FXML private TextField psiStartInput;
+    @FXNumber(validation = NumberFormatterValidator.class)
+    @FXML private TextField psiStartInput;
     @FXML private Label psiEndLabel;
-    @FXNumber @FXML private TextField psiEndInput;
+    @FXNumber(validation = NumberFormatterValidator.class)
+    @FXML private TextField psiEndInput;
     @FXML private Label psiStepsLabel;
-    @FXNumber @FXML private TextField psiStepsInput;
+    @FXNumber(validation = NumberFormatterValidator.class)
+    @FXML private TextField psiStepsInput;
     @FXML private Label energyStartLabel;
-    @FXNumber @FXML private TextField energyStartInput;
+    @FXNumber(validation = NumberFormatterValidator.class)
+    @FXML private TextField energyStartInput;
     @FXML private Label energyEndLabel;
-    @FXNumber @FXML private TextField energyEndInput;
+    @FXNumber(validation = NumberFormatterValidator.class)
+    @FXML private TextField energyEndInput;
     @FXML private Label energyStepsLabel;
-    @FXNumber @FXML private TextField energyStepsInput;
+    @FXNumber(validation = NumberFormatterValidator.class)
+    @FXML private TextField energyStepsInput;
     @FXML private Label titleLabel;
     @FXML private TextField titleInput;
     @FXML private Label aLabel;
-    @FXNumber @FXML private TextField aInput;
+    @FXNumber(validation = NumberFormatterValidator.class)
+    @FXML private TextField aInput;
     @FXML private Label bLabel;
-    @FXNumber @FXML private TextField bInput;
+    @FXNumber(validation = NumberFormatterValidator.class)
+    @FXML private TextField bInput;
     @FXML private Label cLabel;
-    @FXNumber @FXML private TextField cInput;
+    @FXNumber(validation = NumberFormatterValidator.class)
+    @FXML private TextField cInput;
     @FXML private Label alphaLabel;
-    @FXNumber @FXML private TextField alphaInput;
+    @FXNumber(validation = NumberFormatterValidator.class)
+    @FXML private TextField alphaInput;
     @FXML private Label betaLabel;
-    @FXNumber @FXML private TextField betaInput;
+    @FXNumber(validation = NumberFormatterValidator.class)
+    @FXML private TextField betaInput;
     @FXML private Label gammaLabel;
-    @FXNumber @FXML private TextField gammaInput;
+    @FXNumber(validation = NumberFormatterValidator.class)
+    @FXML private TextField gammaInput;
     @FXML private TableView<Atom> atomsDataTable;
     @FXML private TableColumn<Atom, Color> atomColorCol;
     @FXML private TableColumn<Atom, String> atomNameCol;
@@ -158,7 +173,7 @@ public class StructureViewerController implements Initializable {
 
         energyStartInput.textProperty().bindBidirectional(energyStart, new NumberStringConverter());
         energyEndInput.textProperty().bindBidirectional(energyEnd, new NumberStringConverter());
-        energyStepsInput.textProperty().bindBidirectional(energySteps, new NumberStringConverter());
+        energyStepsInput.textProperty().bindBidirectional(energySteps, new NumberStringConverter("#####0"));
 
         savePeaksInput.selectedProperty().bindBidirectional(savePeaks);
         sweepParamsInput.getItems().addAll(ParametersSweep.values());
