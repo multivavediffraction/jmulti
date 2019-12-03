@@ -23,15 +23,22 @@ sourceSets {
     }
 }
 
+startScripts.onlyIf {false}
+
 distributions {
     main {
         contents {
+            from jar {}
             from("$projectDir/tables") {
                 into "tables"
                 include '*.csv'
             }
             from("$projectDir/javaFX-mac") {
-                into "lib"
+                into 'lib'
+            }
+            from("$projectDir/src/main/resources/org/structureviewer"){
+                include '*.ico'
+                rename {String filename -> filename.replace('app_icon', "${project.name}")}
             }
         }
     }
