@@ -6,11 +6,12 @@ import org.jmulti.{CalcParams, Logger, ParametersSweep, UnitCell}
 import org.jmulti.tables.{AtomicFactor, Charge, DispersionCorrectionFS}
 
 import scala.util.{Failure, Success, Try}
+import scala.collection.parallel.CollectionConverters._
 
 class Calc {
   val pi:Double = Math.PI
   val rad:Double = Math.PI / 180.0
-  val edi = Complex(0, 1)
+  val edi:Complex = Complex(0, 1)
 
   private var dispCorrectionMemo = Map[String,Complex]()
 
@@ -21,11 +22,16 @@ class Calc {
   def getDispCorrection(sym:String, wavelength:Double):Try[Complex] = {
     val result = dispCorrectionMemo.get(sym)
     if (result.isEmpty) {
-      val c = DispersionCorrectionFS(sym, wavelength)
-      if (c.isSuccess) {
-        dispCorrectionMemo = dispCorrectionMemo + (sym -> c.getOrElse(Complex(0,0)))
+      dispCorrectionMemo.synchronized {
+        val r = dispCorrectionMemo.get(sym)
+        if (r.isEmpty) {
+          val c = DispersionCorrectionFS(sym, wavelength)
+          if (c.isSuccess) {
+            dispCorrectionMemo = dispCorrectionMemo + (sym -> c.getOrElse(Complex(0, 0)))
+          }
+          c
+        } else Success(r.get)
       }
-      c
     } else Success(result.get)
   }
 
@@ -199,7 +205,7 @@ class Calc {
         if sl2 <= 5.0 / lambda
       } yield (ah, bh, ch)
 
-      val factors = indices map {
+      val factors = (indices.par map {
         case (ah, bh, ch) => for {
           fh1 <- structure_factor(uc, ah, bh, ch, atoms, lambda)
           fh2 <- structure_factor(uc, params.h - ah, params.k - bh, params.l - ch, atoms, lambda)
@@ -211,7 +217,7 @@ class Calc {
       } filter {
         case Success((_, p, fh1, fh2)) => p.normSquare >= 1.0E1 && fh1.normSquare >= 1.0E-6 && fh2.normSquare >= 1.0E-6
         case _ => true
-      }
+      }).seq
 
       Logger.log(s"ncount = ${factors.length}")
 
@@ -253,41 +259,44 @@ class Calc {
 
       b0 = n.cross(a0)
 
-      for (i <- 1 to (params.psiSteps + 1)) {
-        val Psi = if (params.psiSteps == 0) {
-          params.psiStart
-        } else {
-          params.psiStart + (i - 1) * (params.psiEnd - params.psiStart) / params.psiSteps
-        }
+      def indexToPsi(i: Int) = {
+        if (params.psiSteps == 0) params.psiStart
+        else params.psiStart + (i - 1) * (params.psiEnd - params.psiStart) / params.psiSteps
+      }
 
+      val Psi = (1 to (params.psiSteps + 1) map { i =>
+        if (params.psiSteps == 0) params.psiStart
+        else params.psiStart + (i - 1) * (params.psiEnd - params.psiStart) / params.psiSteps
+      }).par
+
+      def reducePlanes(psi: Double): (Double, Double, Double, Double, Double, Double, Double, Double, Double, Complex, Complex, Complex, Complex, Complex, Complex, Complex) = {
         params.sweep match {
           case ParametersSweep.PSI =>
-            Logger.log(s"Psi = $Psi")
+            Logger.log(s"Psi = $psi")
           case ParametersSweep.ENERGY =>
             ()
           case ParametersSweep.BOTH =>
             ()
         }
 
-
         // the wavevector of the incident wave vs Psi for 00\ell reflection
         // and incident and scattered polarization vectors
-        val kx = wavevec * Math.cos(thetab * rad) * Math.cos(Psi * rad)
-        val ky = wavevec * Math.cos(thetab * rad) * Math.sin(Psi * rad)
+        val kx = wavevec * Math.cos(thetab * rad) * Math.cos(psi * rad)
+        val ky = wavevec * Math.cos(thetab * rad) * Math.sin(psi * rad)
         val kz = -wavevec * Math.sin(thetab * rad)
         val k = kx * a0 + ky * b0 + kz * n
         // incident polarization vectors
-        val esx = -Math.sin(Psi * rad) // es - sigma polarization of the initial wave
-        val esy = Math.cos(Psi * rad)
+        val esx = -Math.sin(psi * rad) // es - sigma polarization of the initial wave
+        val esy = Math.cos(psi * rad)
         val esz = 0.0
         val es = esx * a0 + esy * b0 + esz * n
-        val epx = Math.sin(thetab * rad) * Math.cos(Psi * rad) //ep - pi polarization of the initial wave
-        val epy = Math.sin(thetab * rad) * Math.sin(Psi * rad)
+        val epx = Math.sin(thetab * rad) * Math.cos(psi * rad) //ep - pi polarization of the initial wave
+        val epy = Math.sin(thetab * rad) * Math.sin(psi * rad)
         val epz = Math.cos(thetab * rad)
         val ep = epx * a0 + epy * b0 + epz * n
         // incident polarization vector
-        val ep1x = -Math.sin(thetab * rad) * Math.cos(Psi * rad) //ep1 - pi polarization of the scattered wave
-        val ep1y = -Math.sin(thetab * rad) * Math.sin(Psi * rad)
+        val ep1x = -Math.sin(thetab * rad) * Math.cos(psi * rad) //ep1 - pi polarization of the scattered wave
+        val ep1y = -Math.sin(thetab * rad) * Math.sin(psi * rad)
         val ep1z = Math.cos(thetab * rad)
         val ep1 = ep1x * a0 + ep1y * b0 + ep1z * n
         // END of wavevector and polarizations
@@ -305,7 +314,7 @@ class Calc {
             //     Dividing on 0 here create a peak
             val ffactor = fh / (kn2 * (1.0 - chi0) - wavevec ** 2)
             if (params.savePeaks) {
-              peaks.println(f"$Psi%18.8f    $ah    $bh    $ch    ${params.h - ah}    ${params.k - bh}    ${params.l - ch}    ${!ffactor}%18.8f    ${Math.atan(ffactor.im / ffactor.re)}%18.8f")
+              peaks.println(f"$psi%18.8f    $ah    $bh    $ch    ${params.h - ah}    ${params.k - bh}    ${params.l - ch}    ${!ffactor}%18.8f    ${Math.atan(ffactor.im / ffactor.re)}%18.8f")
             }
             //     Polarisation components for final wave, you can find polarisation matrix
             Success((ss + ffactor * (kn2 - kns ** 2), pp + ffactor * (kn2 * Math.cos(pi * thetab / 90.0) - knp1 * knp),
@@ -317,11 +326,14 @@ class Calc {
 
         if (f.isFailure) {
           Logger.log(f.failed.get.getMessage)
-          return
+          return (Double.NaN, Double.NaN, Double.NaN, Double.NaN, Double.NaN, Double.NaN, Double.NaN, Double.NaN,
+            Double.NaN, Complex(Double.NaN,Double.NaN), Complex(Double.NaN,Double.NaN), Complex(Double.NaN,Double.NaN),
+            Complex(Double.NaN,Double.NaN), Complex(Double.NaN,Double.NaN), Complex(Double.NaN,Double.NaN),
+            Complex(Double.NaN,Double.NaN))
         }
 
         val (fMss, fMpp, fMps, fMsp) = f.get
-        val cQQ = fQQ * Math.sin(3 * pi * Psi / 180.0)
+        val cQQ = fQQ * Math.sin(3 * pi * psi / 180.0)
         val fMultss = fMss * 4.0 * pi * r0 / (wavevec ** 2 * vol)
         val fMultpp = fMpp * 4.0 * pi * r0 / (wavevec ** 2 * vol)
         val fMultps = fMps * 4.0 * pi * r0 / (wavevec ** 2 * vol)
@@ -332,10 +344,20 @@ class Calc {
         val fMod2sp = (fMultsp + fMag + cQQ - fDQ).re ** 2 + (fMultsp + fMag + cQQ - fDQ).im ** 2
         val fMod2s = fMod2ps + fMod2ss
         val fMod2p = fMod2pp + fMod2sp
+        val rr2 = ((fMultss + edi * fMultsp - edi * fMag).normSquare + (edi * fMultpp + fMultps + fMag).normSquare) / 2.0
+        val rl2 = ((fMultss - edi * fMultsp + edi * fMag).normSquare + (-edi * fMultpp + fMultps + fMag).normSquare) / 2.0
 
+        (psi, rr2, rl2, fMod2ss, fMod2pp, fMod2ps, fMod2sp, fMod2s, fMod2p, fMultss, fMultpp, fMultps, fMultsp, cQQ, fDQ, fMag)
+      }
+
+      val results = (Psi.par map reducePlanes).seq
+
+      Logger.log("Writing data")
+
+      for ( (psi, rr2, rl2, fMod2ss, fMod2pp, fMod2ps, fMod2sp, fMod2s, fMod2p, fMultss, fMultpp, fMultps, fMultsp, cQQ, fDQ, fMag) <- results) {
         params.sweep match {
           case ParametersSweep.PSI =>
-            azimLin.print(s"$Psi ; $fMod2ss ; $fMod2pp ; $fMod2ps ; $fMod2sp ; $fMod2s ; $fMod2p ; ")
+            azimLin.print(s"$psi ; $fMod2ss ; $fMod2pp ; $fMod2ps ; $fMod2sp ; $fMod2s ; $fMod2p ; ")
             azimLin.print(s"${fMultss.re} ; ${fMultss.im} ; ")
             azimLin.print(s"${fMultpp.re} ; ${fMultpp.im} ; ${fMultps.re} ; ${fMultps.im} ; ")
             azimLin.print(s"${fMultsp.re} ; ${fMultsp.im} ; ")
@@ -352,17 +374,14 @@ class Calc {
             ()
         }
 
-        val Rr2 = ((fMultss + edi * fMultsp - edi * fMag).normSquare + (edi * fMultpp + fMultps + fMag).normSquare) / 2.0
-        val Rl2 = ((fMultss - edi * fMultsp + edi * fMag).normSquare + (-edi * fMultpp + fMultps + fMag).normSquare) / 2.0
-
         params.sweep match {
           case ParametersSweep.PSI =>
-            azimCirc.println(s"$Psi ; $Rr2 ; $Rl2 ; ${(Rr2 - Rl2) / (Rr2 + Rl2)} ; ${(Rr2 + Rl2) / 2.0}")
+            azimCirc.println(s"$psi ; $rr2 ; $rl2 ; ${(rr2 - rl2) / (rr2 + rl2)} ; ${(rr2 + rl2) / 2.0}")
           case ParametersSweep.ENERGY =>
-            azimCirc.println(s"$energy ; $Rr2 ; $Rl2 ; ${(Rr2 - Rl2) / (Rr2 + Rl2)} ; ${(Rr2 + Rl2) / 2.0}")
+            azimCirc.println(s"$energy ; $rr2 ; $rl2 ; ${(rr2 - rl2) / (rr2 + rl2)} ; ${(rr2 + rl2) / 2.0}")
           case ParametersSweep.BOTH =>
-            azimCirc.print(s"; $Rr2")
-            azimLin.print(s"; $Rl2")
+            azimCirc.print(s"; $rr2")
+            azimLin.print(s"; $rl2")
         }
       }
 

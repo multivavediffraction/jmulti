@@ -8,4 +8,6 @@
  - Added capability to select one of predefined structure and simulation parameters
  - Added view with 3d structure of atoms
 0.5
+ - Moved away from modular java app
+ - Using all cores for calculations
 

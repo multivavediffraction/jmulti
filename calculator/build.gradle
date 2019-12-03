@@ -1,7 +1,6 @@
 plugins {
     id 'java-library'
     id 'scala'
-    id 'org.javamodularity.moduleplugin'
     id 'base'
 }
 
@@ -31,6 +30,7 @@ artifacts {
 
 dependencies {
     api 'org.scala-lang:scala-library:2.13.1'
+    api 'org.scala-lang.modules:scala-parallel-collections_2.13:0.2.0'
 
     testImplementation 'org.scalatest:scalatest_2.13:3.0.8'
     testImplementation 'junit:junit:4.12'

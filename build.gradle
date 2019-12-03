@@ -3,7 +3,6 @@ plugins {
     id 'application'
     id 'eclipse'
     id 'idea'
-    id 'org.openjfx.javafxplugin'
 }
 
 repositories {
@@ -13,22 +12,8 @@ repositories {
 sourceCompatibility = 1.11
 targetCompatibility = 1.11
 version = '0.5'
-def mainClass = 'org.structureviewer.StructureViewerFX'
-mainClassName = "org.structureviewer/$mainClass"
-
-javafx {
-    version = "13"
-    modules = [ 'javafx.controls', 'javafx.fxml' ]
-}
-
-jar {
-    manifest {
-        attributes 'Implementation-Title': 'Simulation of Bragg X-ray diffraction in crystalline structures',
-                   'Implementation-Version': project.version,
-//                   'Class-Path': configurations.runtime.collect { it.getName() }.join(' '),
-                   'Main-Class': mainClass
-    }
-}
+def mainClass = 'org.structureviewer.Main'
+mainClassName = mainClass
 
 sourceSets {
     main {
@@ -49,16 +34,40 @@ distributions {
     }
 }
 
-project(':') {
-    dependencies {
-        compileOnly 'org.jetbrains:annotations:17.0.0'
+dependencies {
+    compileOnly 'org.jetbrains:annotations:17.0.0'
 
-        implementation project(path:':calculator', configuration:'jarFile')
-        implementation project(':fx-validation')
-        implementation files('fx-validation/libs/aeFXActions-0.2.0.jar')
-        implementation 'org.scala-lang:scala-library:2.13.1'
+    implementation 'org.openjfx:javafx-base:13.0.1'
+    implementation 'org.openjfx:javafx-base:13.0.1:win'
+    implementation 'org.openjfx:javafx-base:13.0.1:mac'
+    implementation 'org.openjfx:javafx-base:13.0.1:linux'
+    implementation 'org.openjfx:javafx-controls:13.0.1'
+    implementation 'org.openjfx:javafx-controls:13.0.1:win'
+    implementation 'org.openjfx:javafx-controls:13.0.1:mac'
+    implementation 'org.openjfx:javafx-controls:13.0.1:linux'
+    implementation 'org.openjfx:javafx-graphics:13.0.1'
+    implementation 'org.openjfx:javafx-graphics:13.0.1:win'
+    implementation 'org.openjfx:javafx-graphics:13.0.1:mac'
+    implementation 'org.openjfx:javafx-graphics:13.0.1:linux'
+    implementation 'org.openjfx:javafx-fxml:13.0.1'
+    implementation 'org.openjfx:javafx-fxml:13.0.1:win'
+    implementation 'org.openjfx:javafx-fxml:13.0.1:mac'
+    implementation 'org.openjfx:javafx-fxml:13.0.1:linux'
 
-        implementation 'net.sourceforge.jmol:jmol:14.29.27'
+    implementation project(':calculator')
+    implementation project(':fx-validation')
+
+    implementation 'net.sourceforge.jmol:jmol:14.29.27'
+}
+
+afterEvaluate {
+    jar {
+        manifest {
+            attributes 'Implementation-Title': 'Simulation of Bragg X-ray diffraction in crystalline structures',
+                    'Implementation-Version': project.version,
+                    'Class-Path': configurations.runtimeClasspath.files.collect { "lib/$it.name" }.join(' '),
+                    'Main-Class': mainClassName
+        }
     }
 }
 
