@@ -30,6 +30,9 @@ distributions {
                 into "tables"
                 include '*.csv'
             }
+            from("$projectDir/javaFX-mac") {
+                into "lib"
+            }
         }
     }
 }
