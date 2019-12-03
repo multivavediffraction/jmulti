@@ -10,4 +10,6 @@
 0.5
  - Moved away from modular java app
  - Using all cores for calculations
+ - Simplified distribution
+0.6
 
