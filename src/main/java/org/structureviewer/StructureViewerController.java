@@ -54,7 +54,7 @@ public class StructureViewerController implements Initializable {
     @FXML private TextField lInput;
     @FXML private Label sweepParamsLabel;
     @FXML private ComboBox<ParametersSweep> sweepParamsInput;
-    @FXML private CheckBox savePeaksInput;
+    @FXML private CheckBox parallelCalcInput;
     @FXML private Label psiStartLabel;
     @FXNumber(validation = NumberFormatterValidator.class)
     @FXML private TextField psiStartInput;
@@ -112,7 +112,7 @@ public class StructureViewerController implements Initializable {
     private IntegerProperty l = new SimpleIntegerProperty(1);
 
     private ObjectProperty<ParametersSweep> sweep = new SimpleObjectProperty<>(ParametersSweep.PSI);
-    private BooleanProperty savePeaks = new SimpleBooleanProperty(false);
+    private BooleanProperty parallelCalc = new SimpleBooleanProperty(false);
 
     private DoubleProperty psiStart = new SimpleDoubleProperty(0.0);
     private DoubleProperty psiEnd = new SimpleDoubleProperty(360.0);
@@ -175,7 +175,7 @@ public class StructureViewerController implements Initializable {
         energyEndInput.textProperty().bindBidirectional(energyEnd, new NumberStringConverter());
         energyStepsInput.textProperty().bindBidirectional(energySteps, new NumberStringConverter("#####0"));
 
-        savePeaksInput.selectedProperty().bindBidirectional(savePeaks);
+        parallelCalcInput.selectedProperty().bindBidirectional(parallelCalc);
         sweepParamsInput.getItems().addAll(ParametersSweep.values());
         sweepParamsInput.valueProperty().bindBidirectional(sweep);
         titleInput.textProperty().bindBidirectional(title);
@@ -200,7 +200,6 @@ public class StructureViewerController implements Initializable {
         sweepParamsInput.setButtonCell(sweepCellFactory.call(null));
         sweepParamsInput.setCellFactory(sweepCellFactory);
 
-        savePeaksInput.disableProperty().bind(sweep.isNotEqualTo(ParametersSweep.PSI));
         psiEndInput.disableProperty().bind(sweep.isEqualTo(ParametersSweep.ENERGY));
         psiStepsInput.disableProperty().bind(sweep.isEqualTo(ParametersSweep.ENERGY));
         energyEndInput.disableProperty().bind(sweep.isEqualTo(ParametersSweep.PSI));
@@ -256,7 +255,7 @@ public class StructureViewerController implements Initializable {
 
         title.set(params.title);
         sweep.set(params.sweep);
-        savePeaks.set(params.savePeaks);
+        parallelCalc.set(params.parallelCalc);
     }
 
     private void fillUnitCellsParams(UnitCell unitCell) {
@@ -440,7 +439,7 @@ public class StructureViewerController implements Initializable {
         isComputing.set(true);
         Logger.log("Staring calculation");
 
-        var savePeaksValue = sweep.get() == ParametersSweep.PSI && savePeaks.get();
+        var parallelCalcValue = parallelCalc.get();
 
         var psiEndValue = sweep.get() != ParametersSweep.ENERGY ? psiEnd.get() : psiStart.get();
         var psiStepsValue = sweep.get() != ParametersSweep.ENERGY ? psiSteps.get() : 0;
@@ -451,7 +450,7 @@ public class StructureViewerController implements Initializable {
         var parameters = new CalcParams(psiStart.get(), psiEndValue, psiStepsValue,
                 h.get(), k.get(), l.get(),
                 energyStart.get(), energyEndValue,  energyStepsValue,
-                title.get(), sweep.get(), savePeaksValue);
+                title.get(), sweep.get(), parallelCalcValue);
         var unitCell = new UnitCell(a.get(), b.get(), c.get(), alpha.get(), beta.get(), gamma.get());
         var atomsCollection = atomsDataTable.getItems();
 

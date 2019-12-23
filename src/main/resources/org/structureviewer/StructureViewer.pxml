@@ -18,6 +18,7 @@
     <entry key="title.label.text">Title:</entry>
     <entry key="sweep.param.label.text">Iterate  over:</entry>
     <entry key="save.peaks.text">Save selected planes</entry>
+    <entry key="parallel.calc.text">Use parallel calculation</entry>
     <entry key="a.label.text">a:</entry>
     <entry key="b.label.text">b:</entry>
     <entry key="c.label.text">c:</entry>

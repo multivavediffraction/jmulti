@@ -5,6 +5,7 @@ import java.io.FileInputStream
 import org.jmulti.Logger
 import org.jmulti.calc.Complex
 
+import scala.annotation.strictfp
 import scala.io.Source
 import scala.util.{Failure, Success, Try}
 
@@ -14,7 +15,7 @@ import scala.util.{Failure, Success, Try}
  */
 object DispersionCorrectionFS {
 
-  def loadTable(file:String): Map[String, Array[(Double, Complex)]] = {
+  @strictfp def loadTable(file:String): Map[String, Array[(Double, Complex)]] = {
     import Control._
 
     Logger.log(s"Loading table: $file")
@@ -60,7 +61,7 @@ object DispersionCorrectionFS {
 //      "O" -> Array((2.74851,Complex(0.1213,0.1057)),(2.28962, Complex(0.0928,0.0731)))
 //    )
 
-  def interpolate(a:Double, b:Double, v:Complex, u:Complex, x:Double): Complex = {
+  @strictfp def interpolate(a:Double, b:Double, v:Complex, u:Complex, x:Double): Complex = {
     val t = (x-a)/(b-a)
     t*u + (1-t)*v
   }

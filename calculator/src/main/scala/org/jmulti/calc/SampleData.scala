@@ -13,7 +13,7 @@ object Samples {
     val unitCell: UnitCell = new UnitCell(4.91410000, 8.51147087, 5.40600000, 90.0, 90.0, 90.0)
 
     val params: CalcParams = new CalcParams(0, 40, 20, 0, 0, 2, 4.51100000,
-      4.51100000, 1, "SiO2-ortho", ParametersSweep.PSI, false)
+      4.51100000, 1, "SiO2-ortho", ParametersSweep.PSI, true)
 
     val atoms: Array[AtomDescr] = Array(
       AtomDescr("Si", 4, P3(0.23500000, -0.23500000, 0.33333333)),
@@ -41,7 +41,7 @@ object Samples {
   val sampleCuB2O4: SampleData = new SampleData {
     override val unitCell: UnitCell = new UnitCell(12.00000000, 12.00000000, 5.62000000, 90.0, 90.0, 90.0)
     override val params: CalcParams = new CalcParams(0, 360, 1200, 0, 0, 2, 8.04826100,
-      8.04826100, 1, "CuB2O4-sample", ParametersSweep.PSI, false)
+      8.04826100, 1, "CuB2O4-sample", ParametersSweep.PSI, true)
     override val atoms: Array[AtomDescr] = Array(
      AtomDescr("Cu", 9, P3(0.0000000000000000,0.0000000000000000,0.50000000000000000)),
    AtomDescr("Cu", 9, P3(0.50000000000000000,0.0000000000000000,0.25000000000000000)),

@@ -1,30 +1,32 @@
 package org.jmulti.calc
 
+import scala.annotation.strictfp
+
 class P3(val x: Double, val y:Double, val z:Double) {
   def update(x:Double = x, y:Double = y, z:Double = z) = P3(x, y, z)
-  def plus(v: P3): P3 = {
+  @strictfp def plus(v: P3): P3 = {
     P3(x + v.x, y + v.y, z + v.z)
   }
   def + : P3 => P3 = plus
 
-  def mul(a: Double): P3 = {
+  @strictfp def mul(a: Double): P3 = {
     P3(a * x, a * y, a * z)
   }
-  def mul(a:Int): P3 = this * a.toDouble
-  def dot(p: P3): Double = x*p.x + y*p.y + z*p.z
+  @strictfp def mul(a:Int): P3 = this * a.toDouble
+  @strictfp def dot(p: P3): Double = x*p.x + y*p.y + z*p.z
 
   def *(v: Double): P3 = mul(v)
   def *(v: Int): P3 = mul(v)
   def *(p: P3): Double = dot(p)
 
-  def cross(p:P3): P3 = {
+  @strictfp def cross(p:P3): P3 = {
     P3(y*p.z - z*p.y, z*p.x - x*p.z, x*p.y - y*p.x)
   }
 
-  def /(v:Double) = P3(x/v, y/v, z/v)
+  @strictfp def /(v:Double) = P3(x/v, y/v, z/v)
 
-  def normSquare: Double = x*x + y*y + z*z
-  lazy val norm: P3 = this / Math.sqrt(normSquare)
+  @strictfp def normSquare: Double = x*x + y*y + z*z
+  @strictfp lazy val norm: P3 = this / Math.sqrt(normSquare)
 }
 
 object P3 {

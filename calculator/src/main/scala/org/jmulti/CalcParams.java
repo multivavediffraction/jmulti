@@ -15,7 +15,7 @@ public class CalcParams {
     public final String title;
 
     public final ParametersSweep sweep;
-    public final boolean savePeaks;
+    public final boolean parallelCalc;
 
     public final int namax=51; // should be odd 59
     public final int nbmax=51; // should be odd 101
@@ -24,7 +24,7 @@ public class CalcParams {
     public CalcParams(double psiStart, double psiEnd, int psiSteps,
                       int h, int k, int l,
                       double energyStart, double energyEnd, int energySteps,
-                      String title, ParametersSweep sweep, boolean savePeaks)
+                      String title, ParametersSweep sweep, boolean parallelCalc)
     {
         this.psiStart = psiStart;
         this.psiEnd = psiEnd;
@@ -37,6 +37,6 @@ public class CalcParams {
         this.energySteps = energySteps;
         this.title = title;
         this.sweep = sweep;
-        this.savePeaks = savePeaks;
+        this.parallelCalc = parallelCalc;
     }
 }

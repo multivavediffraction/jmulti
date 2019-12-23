@@ -81,7 +81,7 @@
                   <TextField fx:id="lInput" GridPane.columnIndex="5" />
                   <Label fx:id="sweepParamsLabel" text="%sweep.param.label.text" GridPane.rowIndex="1" />
                   <ComboBox fx:id="sweepParamsInput" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <CheckBox fx:id="savePeaksInput" text="%save.peaks.text" GridPane.columnIndex="3" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
+                  <CheckBox fx:id="parallelCalcInput" text="%parallel.calc.text" GridPane.columnIndex="3" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
                   <Label fx:id="psiStartLabel" text="%psi.start.label.text" GridPane.rowIndex="2" />
                   <TextField fx:id="psiStartInput" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <Label fx:id="psiEndLabel" text="%psi.end.label.text" GridPane.columnIndex="2" GridPane.rowIndex="2" />

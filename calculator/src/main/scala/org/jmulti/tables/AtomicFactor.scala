@@ -4,6 +4,7 @@ import java.io.FileInputStream
 
 import org.jmulti.Logger
 
+import scala.annotation.strictfp
 import scala.util.{Failure, Success, Try}
 import scala.io.Source
 
@@ -81,7 +82,7 @@ object AtomicFactor {
 //    "Te" -> Array(3.88240, 1.30980, 2.41170, -1.86420)
 //  )
 
-  def apply(atom:String, charge: Int, sl:Double):Try[Double] = {
+  @strictfp def apply(atom:String, charge: Int, sl:Double):Try[Double] = {
     if (sl <= 2.0) {
       if (smallSinOverLambda.contains((atom, charge))) {
         val c = smallSinOverLambda((atom, charge))

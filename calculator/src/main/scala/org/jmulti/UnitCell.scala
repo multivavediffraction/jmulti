@@ -2,8 +2,10 @@ package org.jmulti
 
 import org.jmulti.calc.P3
 
+import scala.annotation.strictfp
+
 object UnitCell {
-  private val rad = Math.PI / 180.0
+  @strictfp private val rad = Math.PI / 180.0
 
   def apply(a: Double, b: Double, c: Double, alpha: Double, beta: Double, gamma: Double): UnitCell = new UnitCell(a, b, c, alpha, beta, gamma)
 
@@ -23,7 +25,7 @@ object UnitCell {
 }
 
 class UnitCell(val a: Double, val b: Double, val c: Double, val alpha: Double, val beta: Double, val gamma: Double) {
-  def d_hkl(h: Double, k: Double, l: Double): Double = { //1/d^2 ==
+  @strictfp def d_hkl(h: Double, k: Double, l: Double): Double = { //1/d^2 ==
     val sin_a = Math.sin(alpha * UnitCell.rad)
     val cos_a = Math.cos(alpha * UnitCell.rad)
     val sin_b = Math.sin(beta * UnitCell.rad)
@@ -33,7 +35,7 @@ class UnitCell(val a: Double, val b: Double, val c: Double, val alpha: Double, v
     ((h * h * sin_a * sin_a / (a * a)) + (k * k * sin_b * sin_b / (b * b)) + (l * l * sin_c * sin_c / (c * c)) + ((2 * k * l * cos_a) / (b * c)) + ((2 * h * l * cos_b) / (a * c)) + ((2 * h * k * cos_c) / (a * b))) / (1 - cos_a * cos_a - cos_b * cos_b - cos_c * cos_c + 2 * cos_a * cos_b * cos_c)
   }
 
-  def getUnitCellVectors: Array[P3] = {
+  @strictfp def getUnitCellVectors: Array[P3] = {
     val rad = Math.PI / 180
     val a = new P3(this.a, 0, 0)
     val b = new P3(this.b * Math.cos(gamma * rad), this.b * Math.sin(gamma * rad), 0)

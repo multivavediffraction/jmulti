@@ -18,6 +18,7 @@
     <entry key="title.label.text">Метка:</entry>
     <entry key="sweep.param.label.text">Цикл по:</entry>
     <entry key="save.peaks.text">Сохранить отобранные плоскости</entry>
+    <entry key="parallel.calc.text">Параллельные вычисления</entry>
     <entry key="a.label.text">a:</entry>
     <entry key="b.label.text">b:</entry>
     <entry key="c.label.text">c:</entry>

@@ -5,12 +5,13 @@ import java.io.PrintWriter
 import org.jmulti.{CalcParams, Logger, ParametersSweep, UnitCell}
 import org.jmulti.tables.{AtomicFactor, Charge, DispersionCorrectionFS}
 
+import scala.annotation.strictfp
 import scala.util.{Failure, Success, Try}
 import scala.collection.parallel.CollectionConverters._
 
 class Calc {
   val pi:Double = Math.PI
-  val rad:Double = Math.PI / 180.0
+  @strictfp val rad:Double = Math.PI / 180.0
   val edi:Complex = Complex(0, 1)
 
   private var dispCorrectionMemo = Map[String,Complex]()
@@ -19,7 +20,7 @@ class Calc {
     dispCorrectionMemo = Map()
   }
 
-  def getDispCorrection(sym:String, wavelength:Double):Try[Complex] = {
+  @strictfp def getDispCorrection(sym:String, wavelength:Double):Try[Complex] = {
     val result = dispCorrectionMemo.get(sym)
     if (result.isEmpty) {
       dispCorrectionMemo.synchronized {
@@ -35,7 +36,7 @@ class Calc {
     } else Success(result.get)
   }
 
-  def atomic_factor(atom:String, charge:Int, sl:Double, wavelength:Double): Try[Complex] = for {
+  @strictfp def atomic_factor(atom:String, charge:Int, sl:Double, wavelength:Double): Try[Complex] = for {
     corr <- getDispCorrection(atom, wavelength)
     f    <- AtomicFactor(atom, charge, sl)
   } yield corr + f
@@ -45,27 +46,28 @@ class Calc {
     s"${Math.abs(charge)}$sign"
   }
 
-  def sumTryComplex(a:Try[Complex], b:Try[Complex]):Try[Complex] =
+  @strictfp def sumTryComplex(a:Try[Complex], b:Try[Complex]):Try[Complex] =
     (a,b) match {
       case (Success(a), Success(b)) => Success(a+b)
       case (err:Failure[_], _) => err
       case (_, err:Failure[_]) => err
     }
 
-  def structure_factor(uc:UnitCell, h:Double, k:Double, l:Double, atoms:Array[AtomDescr], wavelength:Double): Try[Complex] ={
+  @strictfp def structure_factor(uc:UnitCell, h:Double, k:Double, l:Double, atoms:Array[AtomDescr], wavelength:Double): Try[Complex] ={
     val sl = 0.5*Math.sqrt(uc.d_hkl(h, k, l))
     val f = atoms.map( a => atomic_factor(a.name, a.charge, sl, wavelength).map(_ * cexp(2 * pi * (h*a.p.x + k*a.p.y + l*a.p.z) * edi)))
     f reduce sumTryComplex
   }
 
-  def apply(uc:UnitCell, atoms:Array[AtomDescr], params: CalcParams): Unit = {
+  @strictfp def apply(uc:UnitCell, atoms:Array[AtomDescr], params: CalcParams): Unit = {
+    val parallel = if (params.parallelCalc) "par" else "seq"
     val filename = params.sweep match {
       case ParametersSweep.PSI =>
-        s"${params.title}-(${params.h}${params.k}${params.l})-E ${params.energyStart}-psi ${params.psiStart} ${params.psiEnd} ${params.psiSteps}"
+        s"${params.title}-(${params.h}${params.k}${params.l})-E ${params.energyStart}-psi ${params.psiStart} ${params.psiEnd} ${params.psiSteps} $parallel"
       case ParametersSweep.ENERGY  =>
-        s"${params.title}-(${params.h}${params.k}${params.l})-E ${params.energyStart} ${params.energyEnd} ${params.energySteps}-psi ${params.psiStart}"
+        s"${params.title}-(${params.h}${params.k}${params.l})-E ${params.energyStart} ${params.energyEnd} ${params.energySteps}-psi ${params.psiStart} $parallel"
       case ParametersSweep.BOTH =>
-        s"${params.title}-(${params.h}${params.k}${params.l})-E ${params.energyStart} ${params.energyEnd} ${params.energySteps}-psi ${params.psiStart} ${params.psiEnd} ${params.psiSteps}"
+        s"${params.title}-(${params.h}${params.k}${params.l})-E ${params.energyStart} ${params.energyEnd} ${params.energySteps}-psi ${params.psiStart} ${params.psiEnd} ${params.psiSteps} $parallel"
     }
 
     // calculated theta for main reflection in degrees
@@ -205,7 +207,9 @@ class Calc {
         if sl2 <= 5.0 / lambda
       } yield (ah, bh, ch)
 
-      val factors = (indices.par map {
+      type StructureFactor = Try[((Int,Int,Int),Complex,Complex,Complex)]
+
+      @strictfp def calcStructFactor: ((Int,Int,Int)) => StructureFactor = {
         case (ah, bh, ch) => for {
           fh1 <- structure_factor(uc, ah, bh, ch, atoms, lambda)
           fh2 <- structure_factor(uc, params.h - ah, params.k - bh, params.l - ch, atoms, lambda)
@@ -214,20 +218,25 @@ class Calc {
           p = fh1 * fh2
 //          if p.normSquare >= 1.0E1 // was 5 this excludes small umweg reflections
         } yield ((ah, bh, ch), p, fh1, fh2)
-      } filter {
+      }
+
+      @strictfp def noSmallFactors: StructureFactor => Boolean = {
         case Success((_, p, fh1, fh2)) => p.normSquare >= 1.0E1 && fh1.normSquare >= 1.0E-6 && fh2.normSquare >= 1.0E-6
         case _ => true
-      }).seq
+      }
+
+      val factors = if (params.parallelCalc) (indices.par map calcStructFactor filter noSmallFactors).seq
+      else indices map calcStructFactor filter noSmallFactors
 
       Logger.log(s"ncount = ${factors.length}")
 
-      val peaks = if (params.savePeaks) {
-        val p = new PrintWriter(s"peaks-hkl-$filename.dat") // 10
-        p.println("Psi h1 k1 l1 h2 k2 l2 Ffactor")
-        p
-      } else {
-        null
-      }
+//      val peaks = if (params.savePeaks) {
+//        val p = new PrintWriter(s"peaks-hkl-$filename.dat") // 10
+//        p.println("Psi h1 k1 l1 h2 k2 l2 Ffactor")
+//        p
+//      } else {
+//        null
+//      }
 
       // Calculating basis for incident wave vector
       val n = (params.h * aRec + params.k * bRec + params.l * cRec).norm
@@ -259,7 +268,7 @@ class Calc {
 
       b0 = n.cross(a0)
 
-      def indexToPsi(i: Int) = {
+      @strictfp def indexToPsi(i: Int) = {
         if (params.psiSteps == 0) params.psiStart
         else params.psiStart + (i - 1) * (params.psiEnd - params.psiStart) / params.psiSteps
       }
@@ -269,7 +278,7 @@ class Calc {
         else params.psiStart + (i - 1) * (params.psiEnd - params.psiStart) / params.psiSteps
       }).par
 
-      def reducePlanes(psi: Double): (Double, Double, Double, Double, Double, Double, Double, Double, Double, Complex, Complex, Complex, Complex, Complex, Complex, Complex) = {
+      @strictfp def reducePlanes(psi: Double): (Double, Double, Double, Double, Double, Double, Double, Double, Double, Complex, Complex, Complex, Complex, Complex, Complex, Complex) = {
         params.sweep match {
           case ParametersSweep.PSI =>
             Logger.log(s"Psi = $psi")
@@ -313,9 +322,9 @@ class Calc {
             val knp1 = (k + p) * ep1 //this is \mathbf{k}_n\cdot\mathbf{\pi'}
             //     Dividing on 0 here create a peak
             val ffactor = fh / (kn2 * (1.0 - chi0) - wavevec ** 2)
-            if (params.savePeaks) {
-              peaks.println(f"$psi%18.8f    $ah    $bh    $ch    ${params.h - ah}    ${params.k - bh}    ${params.l - ch}    ${!ffactor}%18.8f    ${Math.atan(ffactor.im / ffactor.re)}%18.8f")
-            }
+//            if (params.savePeaks) {
+//              peaks.println(f"$psi%18.8f    $ah    $bh    $ch    ${params.h - ah}    ${params.k - bh}    ${params.l - ch}    ${!ffactor}%18.8f    ${Math.atan(ffactor.im / ffactor.re)}%18.8f")
+//            }
             //     Polarisation components for final wave, you can find polarisation matrix
             Success((ss + ffactor * (kn2 - kns ** 2), pp + ffactor * (kn2 * Math.cos(pi * thetab / 90.0) - knp1 * knp),
               ps - ffactor * knp1 * kns, sp - ffactor * kns * knp
@@ -350,7 +359,7 @@ class Calc {
         (psi, rr2, rl2, fMod2ss, fMod2pp, fMod2ps, fMod2sp, fMod2s, fMod2p, fMultss, fMultpp, fMultps, fMultsp, cQQ, fDQ, fMag)
       }
 
-      val results = (Psi.par map reducePlanes).seq
+      val results = if (params.parallelCalc) (Psi.par map reducePlanes).seq else { Psi map reducePlanes }
 
       Logger.log("Writing data")
 
@@ -385,9 +394,9 @@ class Calc {
         }
       }
 
-      if (params.savePeaks) {
-        peaks.close()
-      }
+//      if (params.savePeaks) {
+//        peaks.close()
+//      }
 
       params.sweep match {
         case ParametersSweep.PSI =>
