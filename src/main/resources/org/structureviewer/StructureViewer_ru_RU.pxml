@@ -31,4 +31,6 @@
     <entry key="table.column.x">x</entry>
     <entry key="table.column.y">y</entry>
     <entry key="table.column.z">z</entry>
+    <entry key="progressDone">Завершено за %s</entry>
+    <entry key="progressEstimation">Прошло времени: %s, оценка полного времени: %s (осталось: %s)</entry>
 </properties>

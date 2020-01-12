@@ -13,6 +13,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.converter.NumberStringConverter;
@@ -35,6 +36,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import static org.structureviewer.Utils.epsilonEquals;
 
@@ -43,6 +45,8 @@ public class StructureViewerController implements Initializable {
     @FXML private ComboBox<String> params;
     @FXML private Button calculateBtn;
     @FXML private ListView<String> logView;
+    @FXML private ProgressBar progressBar;
+    @FXML private Text progressText;
     @FXML private Label hInputLabel;
     @FXNumber(validation = NumberFormatterValidator.class)
     @FXML private TextField hInput;
@@ -131,17 +135,97 @@ public class StructureViewerController implements Initializable {
     private DoubleProperty beta = new SimpleDoubleProperty(90.0);
     private DoubleProperty gamma = new SimpleDoubleProperty(90.0);
 
+    ResourceBundle bundle;
+
     private Stage primaryStage;
     private JmolAdapter adapter;
     private final FileChooser fc = new FileChooser();
     private String file;
 
+    private class GuiLogger implements org.jmulti.Logger.LogWriter {
+        private long maxProgress = 0;
+        private long progress = 0;
+        private long startTime = 0;
+
+        @Override
+        public void write(String msg) {
+            Platform.runLater(() -> logView.getItems().add(msg));
+        }
+
+        @Override
+        public void resetProgress() {
+            progress = 0;
+            startTime = System.currentTimeMillis();
+
+            Platform.runLater(() -> {
+                progressBar.setProgress(0.0);
+                progressText.setText("");
+            });
+        }
+
+        @Override
+        public void setProgressComplete() {
+            progress = maxProgress;
+            final long totalTime = System.currentTimeMillis() - startTime;
+            Platform.runLater(() -> {
+                progressBar.setProgress(1.0);
+                if (null != bundle) {
+                    progressText.setText(String.format(bundle.getString("progressDone"), formatInterval(totalTime)));
+                } else {
+                    progressText.setText("Done");
+                }
+            });
+        }
+
+        @Override
+        public void setMaxProgress(long max) {
+            maxProgress = max;
+            incrementProgress(0);
+        }
+
+        @Override
+        synchronized public void incrementProgress(long inc) {
+            progress += inc;
+            double value = maxProgress == 0 ? 1.0 : (double) progress / (double)maxProgress;
+            String estimate = estimateProgress();
+            Platform.runLater(() -> {
+                progressBar.setProgress(value);
+                progressText.setText(estimate);
+            });
+        }
+
+        private String formatInterval(final long l)
+        {
+            final long hr = TimeUnit.MILLISECONDS.toHours(l);
+            final long min = TimeUnit.MILLISECONDS.toMinutes(l - TimeUnit.HOURS.toMillis(hr));
+            final long sec = TimeUnit.MILLISECONDS.toSeconds(l - TimeUnit.HOURS.toMillis(hr) - TimeUnit.MINUTES.toMillis(min));
+            return String.format("%02d:%02d:%02d", hr, min, sec);
+        }
+
+        private String estimateProgress(){
+            final long currentTime = System.currentTimeMillis();
+
+            final long elapsedTime = currentTime - startTime;
+            final long totalTime = 0 == progress ? 0 : elapsedTime * maxProgress / progress;
+            final long eta = 0 == progress ? 0 : totalTime - elapsedTime;
+
+            if (null == bundle){
+                return String.format("Elapsed: %d seconds, estimated completion in: %d seconds", elapsedTime/1000, eta/1000);
+            } else {
+                return String.format(bundle.getString("progressEstimation"), formatInterval(elapsedTime),
+                        formatInterval(totalTime), formatInterval(eta));
+            }
+        }
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources){
+        bundle = resources;
+
+        progressBar.setMinHeight(progressText.getBoundsInLocal().getHeight() + 10);
+
         adapter = new SmarterJmolAdapter();
-        Logger.setWriter(str -> Platform.runLater(() -> {
-            logView.getItems().add(str);
-        }));
+        Logger.setWriter(new GuiLogger());
 
         hInputLabel.setLabelFor(hInput);
         kInputLabel.setLabelFor(kInput);
@@ -438,6 +522,7 @@ public class StructureViewerController implements Initializable {
         logView.getItems().clear();
         isComputing.set(true);
         Logger.log("Staring calculation");
+        Logger.resetProgress();
 
         var parallelCalcValue = parallelCalc.get();
 
@@ -456,6 +541,8 @@ public class StructureViewerController implements Initializable {
 
         var atoms = atomsCollection.stream().map(Atom::getDescr).toArray(AtomDescr[]::new);
 
+        Logger.setMaxProgress((psiStepsValue == 0 ? 2 : psiStepsValue + 1) * (energyStepsValue == 0 ? 1 : energyStepsValue));
+
         var calc = CompletableFuture.runAsync(() -> {
             Logger.log("In executor thread before starting calculation");
             Calc$.MODULE$.apply(unitCell, atoms, parameters);
@@ -463,6 +550,7 @@ public class StructureViewerController implements Initializable {
 
         calc.thenRun(() -> {
             Logger.log("Calculation completed");
+            Logger.setPreogressComplete();
             Platform.runLater(() -> isComputing.set(false));
         });
     }

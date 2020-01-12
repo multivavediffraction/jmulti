@@ -31,4 +31,6 @@
     <entry key="table.column.x">x</entry>
     <entry key="table.column.y">y</entry>
     <entry key="table.column.z">z</entry>
+    <entry key="progressDone">Done in %s</entry>
+    <entry key="progressEstimation">Elapsed time: %s, estimated total: %s (left: %s)</entry>
 </properties>

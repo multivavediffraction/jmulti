@@ -228,6 +228,8 @@ class Calc {
       val factors = if (params.parallelCalc) (indices.par map calcStructFactor filter noSmallFactors).seq
       else indices map calcStructFactor filter noSmallFactors
 
+      Logger.incrementProgress()
+
       Logger.log(s"ncount = ${factors.length}")
 
 //      val peaks = if (params.savePeaks) {
@@ -355,6 +357,8 @@ class Calc {
         val fMod2p = fMod2pp + fMod2sp
         val rr2 = ((fMultss + edi * fMultsp - edi * fMag).normSquare + (edi * fMultpp + fMultps + fMag).normSquare) / 2.0
         val rl2 = ((fMultss - edi * fMultsp + edi * fMag).normSquare + (-edi * fMultpp + fMultps + fMag).normSquare) / 2.0
+
+        Logger.incrementProgress()
 
         (psi, rr2, rl2, fMod2ss, fMod2pp, fMod2ps, fMod2sp, fMod2s, fMod2p, fMultss, fMultpp, fMultps, fMultsp, cQQ, fDQ, fMag)
       }
