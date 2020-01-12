@@ -94,11 +94,11 @@ class Calc {
     val azimLin = params.sweep match {
       case ParametersSweep.PSI =>
         val w = new PrintWriter (s"azim-lin-$filename.csv")
-        w.println(s"Psi;fMod2ss;fMod2pp;fMod2ps;fMod2sp;fMod2s;fMod2p;fMulssRe;fMulssIm;fMulppRe;fMulppIm;fMulpsRe;fMulpsIm;fMulspRe;fMulspIm;fQQRe;fQQIm;fDQRe;fDQIm;fMagRe;fMagIm;Energy=${params.energyStart}")
+        w.println(s"Psi;h;k;l;fMod2ss;fMod2pp;fMod2ps;fMod2sp;fMod2s;fMod2p;fMulssRe;fMulssIm;fMulppRe;fMulppIm;fMulpsRe;fMulpsIm;fMulspRe;fMulspIm;fQQRe;fQQIm;fDQRe;fDQIm;fMagRe;fMagIm;Energy=${params.energyStart}")
         w
       case ParametersSweep.ENERGY =>
         val w = new PrintWriter (s"azim-lin-$filename.csv")
-        w.println(s"Energy;fMod2ss;fMod2pp;fMod2ps;fMod2sp;fMod2s;fMod2p;fMulssRe;fMulssIm;fMulppRe;fMulppIm;fMulpsRe;fMulpsIm;fMulspRe;fMulspIm;fQQRe;fQQIm;fDQRe;fDQIm;fMagRe;fMagIm;Psi=${params.psiStart}")
+        w.println(s"Energy;h;k;l;fMod2ss;fMod2pp;fMod2ps;fMod2sp;fMod2s;fMod2p;fMulssRe;fMulssIm;fMulppRe;fMulppIm;fMulpsRe;fMulpsIm;fMulspRe;fMulspIm;fQQRe;fQQIm;fDQRe;fDQIm;fMagRe;fMagIm;Psi=${params.psiStart}")
         w
       case ParametersSweep.BOTH =>
         val w = new PrintWriter (s"Rl2-field-$filename.csv")
@@ -114,11 +114,11 @@ class Calc {
     val azimCirc = params.sweep match {
       case ParametersSweep.PSI =>
         val w = new PrintWriter (s"azim-circ-$filename.csv")
-        w.println(s"Psi;Rr2;Rl2;(Rr2-Rl2)/(Rr2+Rl2);(Rr2+Rl2)/2;Energy=${params.energyStart}")
+        w.println(s"Psi;h;k;l;Rr2;Rl2;(Rr2-Rl2)/(Rr2+Rl2);(Rr2+Rl2)/2;Energy=${params.energyStart}")
         w
       case ParametersSweep.ENERGY =>
         val w = new PrintWriter (s"azim-circ-$filename.csv")
-        w.println(s"Energy;Rr2;Rl2;(Rr2-Rl2)/(Rr2+Rl2);(Rr2+Rl2)/2;Psi=${params.psiStart}")
+        w.println(s"Energy;h;k;l;Rr2;Rl2;(Rr2-Rl2)/(Rr2+Rl2);(Rr2+Rl2)/2;Psi=${params.psiStart}")
         w
       case ParametersSweep.BOTH =>
         val w = new PrintWriter (s"Rr2-field-$filename.csv")
@@ -131,6 +131,19 @@ class Calc {
         w
     }
 
+    val peaks = params.sweep match {
+      case ParametersSweep.BOTH =>
+        val p = new PrintWriter(s"peaks-hkl-$filename.dat")
+        val psiValues = (1 to (params.psiSteps + 1)) map {
+          i =>
+            val psi = params.psiStart + (i - 1) * (params.psiEnd - params.psiStart) / params.psiSteps
+            psi.toString
+        }
+        p.println(s"Energy\\Psi;${psiValues.mkString(";")}")
+        p
+      case _ => null
+    }
+
     for (e <- 1 to (params.energySteps + 1)) {
       val energy = if (params.energySteps == 0) {
         params.energyStart
@@ -141,6 +154,7 @@ class Calc {
       if (params.sweep == ParametersSweep.BOTH) {
         azimCirc.print(s"$energy")
         azimLin.print(s"$energy")
+        peaks.print(s"$energy")
       }
 
       reset()
@@ -232,14 +246,6 @@ class Calc {
 
       Logger.log(s"ncount = ${factors.length}")
 
-//      val peaks = if (params.savePeaks) {
-//        val p = new PrintWriter(s"peaks-hkl-$filename.dat") // 10
-//        p.println("Psi h1 k1 l1 h2 k2 l2 Ffactor")
-//        p
-//      } else {
-//        null
-//      }
-
       // Calculating basis for incident wave vector
       val n = (params.h * aRec + params.k * bRec + params.l * cRec).norm
 
@@ -280,7 +286,7 @@ class Calc {
         else params.psiStart + (i - 1) * (params.psiEnd - params.psiStart) / params.psiSteps
       }).par
 
-      @strictfp def reducePlanes(psi: Double): (Double, Double, Double, Double, Double, Double, Double, Double, Double, Complex, Complex, Complex, Complex, Complex, Complex, Complex) = {
+      @strictfp def reducePlanes(psi: Double): (Double, Double, Double, Double, Double, Double, Double, Double, Double, Complex, Complex, Complex, Complex, Complex, Complex, Complex, (Int, Int, Int)) = {
         params.sweep match {
           case ParametersSweep.PSI =>
             Logger.log(s"Psi = $psi")
@@ -311,8 +317,8 @@ class Calc {
         val ep1z = Math.cos(thetab * rad)
         val ep1 = ep1x * a0 + ep1y * b0 + ep1z * n
         // END of wavevector and polarizations
-        val f = factors.foldLeft(Success((Complex(0, 0), Complex(0, 0), Complex(0, 0), Complex(0, 0))): Try[(Complex, Complex, Complex, Complex)]) {
-          case (Success((ss, pp, ps, sp)), Success(((ah, bh, ch), fh, _, _))) =>
+        val f = factors.foldLeft(Success((Complex(0, 0), Complex(0, 0), Complex(0, 0), Complex(0, 0), Double.MinValue, (0, 0, 0))): Try[(Complex, Complex, Complex, Complex, Double, (Int, Int, Int))]) {
+          case (Success((ss, pp, ps, sp, maxFactor, planes)), Success(((ah, bh, ch), fh, _, _))) =>
             //val kn2 = (kx + aRec * ah) ** 2 + (ky + bRec * bh) ** 2 + (kz + cRec * ch) ** 2 //this is \mathbf{k}_n^2
             val p = aRec * ah + bRec * bh + cRec * ch
             val kn2 = (k + p).normSquare //this is \mathbf{k}_n^2
@@ -324,12 +330,10 @@ class Calc {
             val knp1 = (k + p) * ep1 //this is \mathbf{k}_n\cdot\mathbf{\pi'}
             //     Dividing on 0 here create a peak
             val ffactor = fh / (kn2 * (1.0 - chi0) - wavevec ** 2)
-//            if (params.savePeaks) {
-//              peaks.println(f"$psi%18.8f    $ah    $bh    $ch    ${params.h - ah}    ${params.k - bh}    ${params.l - ch}    ${!ffactor}%18.8f    ${Math.atan(ffactor.im / ffactor.re)}%18.8f")
-//            }
-            //     Polarisation components for final wave, you can find polarisation matrix
+            val ffactorAbs = ffactor.normSquare
             Success((ss + ffactor * (kn2 - kns ** 2), pp + ffactor * (kn2 * Math.cos(pi * thetab / 90.0) - knp1 * knp),
-              ps - ffactor * knp1 * kns, sp - ffactor * kns * knp
+              ps - ffactor * knp1 * kns, sp - ffactor * kns * knp, if (maxFactor < ffactorAbs) ffactorAbs else maxFactor,
+              if (maxFactor < ffactorAbs) (ah, bh, ch) else planes
             ))
           case (err: Failure[_], _) => err
           case (_, Failure(err)) => Failure(err)
@@ -340,10 +344,10 @@ class Calc {
           return (Double.NaN, Double.NaN, Double.NaN, Double.NaN, Double.NaN, Double.NaN, Double.NaN, Double.NaN,
             Double.NaN, Complex(Double.NaN,Double.NaN), Complex(Double.NaN,Double.NaN), Complex(Double.NaN,Double.NaN),
             Complex(Double.NaN,Double.NaN), Complex(Double.NaN,Double.NaN), Complex(Double.NaN,Double.NaN),
-            Complex(Double.NaN,Double.NaN))
+            Complex(Double.NaN,Double.NaN), (Int.MinValue, Int.MinValue, Int.MinValue))
         }
 
-        val (fMss, fMpp, fMps, fMsp) = f.get
+        val (fMss, fMpp, fMps, fMsp, _, maxPlanes) = f.get
         val cQQ = fQQ * Math.sin(3 * pi * psi / 180.0)
         val fMultss = fMss * 4.0 * pi * r0 / (wavevec ** 2 * vol)
         val fMultpp = fMpp * 4.0 * pi * r0 / (wavevec ** 2 * vol)
@@ -360,24 +364,24 @@ class Calc {
 
         Logger.incrementProgress()
 
-        (psi, rr2, rl2, fMod2ss, fMod2pp, fMod2ps, fMod2sp, fMod2s, fMod2p, fMultss, fMultpp, fMultps, fMultsp, cQQ, fDQ, fMag)
+        (psi, rr2, rl2, fMod2ss, fMod2pp, fMod2ps, fMod2sp, fMod2s, fMod2p, fMultss, fMultpp, fMultps, fMultsp, cQQ, fDQ, fMag, maxPlanes)
       }
 
       val results = if (params.parallelCalc) (Psi.par map reducePlanes).seq else { Psi map reducePlanes }
 
       Logger.log("Writing data")
 
-      for ( (psi, rr2, rl2, fMod2ss, fMod2pp, fMod2ps, fMod2sp, fMod2s, fMod2p, fMultss, fMultpp, fMultps, fMultsp, cQQ, fDQ, fMag) <- results) {
+      for ( (psi, rr2, rl2, fMod2ss, fMod2pp, fMod2ps, fMod2sp, fMod2s, fMod2p, fMultss, fMultpp, fMultps, fMultsp, cQQ, fDQ, fMag, maxPlanes) <- results) {
         params.sweep match {
           case ParametersSweep.PSI =>
-            azimLin.print(s"$psi ; $fMod2ss ; $fMod2pp ; $fMod2ps ; $fMod2sp ; $fMod2s ; $fMod2p ; ")
+            azimLin.print(s"$psi ; ${maxPlanes._1}; ${maxPlanes._2}; ${maxPlanes._3} ; $fMod2ss ; $fMod2pp ; $fMod2ps ; $fMod2sp ; $fMod2s ; $fMod2p ; ")
             azimLin.print(s"${fMultss.re} ; ${fMultss.im} ; ")
             azimLin.print(s"${fMultpp.re} ; ${fMultpp.im} ; ${fMultps.re} ; ${fMultps.im} ; ")
             azimLin.print(s"${fMultsp.re} ; ${fMultsp.im} ; ")
             azimLin.print(s"${cQQ.re} ; ${cQQ.im} ; ${fDQ.re} ; ${fDQ.im} ; ")
             azimLin.println(s"${fMag.re} ; ${fMag.im}")
           case ParametersSweep.ENERGY =>
-            azimLin.print(s"$energy ; $fMod2ss ; $fMod2pp ; $fMod2ps ; $fMod2sp ; $fMod2s ; $fMod2p ; ")
+            azimLin.print(s"$energy ; ${maxPlanes._1}; ${maxPlanes._2}; ${maxPlanes._3} ; $fMod2ss ; $fMod2pp ; $fMod2ps ; $fMod2sp ; $fMod2s ; $fMod2p ; ")
             azimLin.print(s"${fMultss.re} ; ${fMultss.im} ; ")
             azimLin.print(s"${fMultpp.re} ; ${fMultpp.im} ; ${fMultps.re} ; ${fMultps.im} ; ")
             azimLin.print(s"${fMultsp.re} ; ${fMultsp.im} ; ")
@@ -389,18 +393,15 @@ class Calc {
 
         params.sweep match {
           case ParametersSweep.PSI =>
-            azimCirc.println(s"$psi ; $rr2 ; $rl2 ; ${(rr2 - rl2) / (rr2 + rl2)} ; ${(rr2 + rl2) / 2.0}")
+            azimCirc.println(s"$psi ; ${maxPlanes._1}; ${maxPlanes._2}; ${maxPlanes._3} ; $rr2 ; $rl2 ; ${(rr2 - rl2) / (rr2 + rl2)} ; ${(rr2 + rl2) / 2.0}")
           case ParametersSweep.ENERGY =>
-            azimCirc.println(s"$energy ; $rr2 ; $rl2 ; ${(rr2 - rl2) / (rr2 + rl2)} ; ${(rr2 + rl2) / 2.0}")
+            azimCirc.println(s"$energy ; ${maxPlanes._1}; ${maxPlanes._2}; ${maxPlanes._3} ; $rr2 ; $rl2 ; ${(rr2 - rl2) / (rr2 + rl2)} ; ${(rr2 + rl2) / 2.0}")
           case ParametersSweep.BOTH =>
             azimCirc.print(s"; $rr2")
             azimLin.print(s"; $rl2")
+            peaks.print(s"; (${maxPlanes._1}, ${maxPlanes._2}, ${maxPlanes._3})")
         }
       }
-
-//      if (params.savePeaks) {
-//        peaks.close()
-//      }
 
       params.sweep match {
         case ParametersSweep.PSI =>
@@ -409,6 +410,7 @@ class Calc {
         case ParametersSweep.BOTH =>
           azimCirc.println()
           azimLin.println()
+          peaks.println()
         case _ =>
           ()
       }
@@ -421,6 +423,7 @@ class Calc {
       case ParametersSweep.BOTH =>
         azimCirc.close()
         azimLin.close()
+        peaks.close()
       case _ =>
         ()
     }
