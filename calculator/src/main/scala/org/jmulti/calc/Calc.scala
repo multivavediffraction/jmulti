@@ -166,7 +166,7 @@ class Calc {
 
       val r0: Double = 2.81794092e-5d //classical electron radius in Angstrom
 
-      val lambda = 12.398519 / energy // calculated lambda in A, Ex(keV) was read above
+      val lambda = 12.398519 / energy // a calculated lambda in A, Ex(keV) was read above
 
       // calculated thetab for main reflection in degrees
       val thetab = Math.asin(0.5 * Math.sqrt(uc.d_hkl(params.h, params.k, params.l)) * lambda) / rad
@@ -212,6 +212,7 @@ class Calc {
         ah <- (-params.namax / 2) to (params.namax / 2)
         bh <- (-params.nbmax / 2) to (params.nbmax / 2)
         ch <- (-params.ncmax / 2) to (params.ncmax / 2)
+        if 0 != ah && 0 != bh && 0 != ch
         ah2 = params.h - ah
         bh2 = params.k - bh
         ch2 = params.l - ch
@@ -317,7 +318,7 @@ class Calc {
         val ep1z = Math.cos(thetab * rad)
         val ep1 = ep1x * a0 + ep1y * b0 + ep1z * n
         // END of wavevector and polarizations
-        val f = factors.foldLeft(Success((Complex(0, 0), Complex(0, 0), Complex(0, 0), Complex(0, 0), Double.MinValue, (0, 0, 0))): Try[(Complex, Complex, Complex, Complex, Double, (Int, Int, Int))]) {
+        val f = factors.foldLeft(Success((Complex(0, 0), Complex(0, 0), Complex(0, 0), Complex(0, 0), -1.0, (Int.MinValue, Int.MinValue, Int.MinValue))): Try[(Complex, Complex, Complex, Complex, Double, (Int, Int, Int))]) {
           case (Success((ss, pp, ps, sp, maxFactor, planes)), Success(((ah, bh, ch), fh, _, _))) =>
             //val kn2 = (kx + aRec * ah) ** 2 + (ky + bRec * bh) ** 2 + (kz + cRec * ch) ** 2 //this is \mathbf{k}_n^2
             val p = aRec * ah + bRec * bh + cRec * ch
