@@ -74,7 +74,7 @@ object AtomicFactor {
   lazy val largeSinOverLambda:Map[String,Array[Double]] =
     loadTable("tables/ict.c.6115.csv") { case (str, line) =>
     val values = str.split(";")
-    values(1) -> Array(double(values(2), line), double(values(3), line), double(values(4), line), double(values(5), line))
+    values(1) -> Array(double(values(2), line), double(values(3), line), double(values(4), line)/10.0, double(values(5), line)/100.0)
   }.toMap
 //  val largeSinOverLambda:Map[String,Array[Double]] = Map(
 //    "O" -> Array(1.3053, -0.83742, -0.016738, 0.00475),
