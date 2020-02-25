@@ -216,6 +216,7 @@ class Calc {
         ah2 = params.h - ah
         bh2 = params.k - bh
         ch2 = params.l - ch
+        if 0 != ah2 && 0 != bh2 && 0 != ch2
         sl1 = 0.5 * Math.sqrt(uc.d_hkl(ah, bh, ch))
         if sl1 <= 5.0 / lambda // this spherical restriction on reflections allows to keep almost exact hexagonal symmetry
         sl2 = 0.5 * Math.sqrt(uc.d_hkl(ah2, bh2, ch2))
