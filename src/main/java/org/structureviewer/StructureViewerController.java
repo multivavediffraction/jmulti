@@ -153,6 +153,11 @@ public class StructureViewerController implements Initializable {
         }
 
         @Override
+        public void error(String msg) {
+            Platform.runLater(() -> new Alert(Alert.AlertType.ERROR, msg).showAndWait());
+        }
+
+        @Override
         public void resetProgress() {
             progress = 0;
             startTime = System.currentTimeMillis();
@@ -550,7 +555,7 @@ public class StructureViewerController implements Initializable {
 
         calc.thenRun(() -> {
             Logger.log("Calculation completed");
-            Logger.setPreogressComplete();
+            Logger.setProgressComplete();
             Platform.runLater(() -> isComputing.set(false));
         });
     }

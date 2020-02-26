@@ -198,7 +198,7 @@ class Calc {
       }
       val t2 = t.reduce(sumTryComplex)
       if (t2.isFailure) {
-        Logger.log(t2.failed.get.getMessage)
+        Logger.error(t2.failed.get.getMessage)
         return
       }
       val chi0 = -4.0 * pi * r0 * t2.get / (wavevec ** 2 * vol)
@@ -342,7 +342,7 @@ class Calc {
         }
 
         if (f.isFailure) {
-          Logger.log(f.failed.get.getMessage)
+          Logger.error(f.failed.get.getMessage)
           return (Double.NaN, Double.NaN, Double.NaN, Double.NaN, Double.NaN, Double.NaN, Double.NaN, Double.NaN,
             Double.NaN, Complex(Double.NaN,Double.NaN), Complex(Double.NaN,Double.NaN), Complex(Double.NaN,Double.NaN),
             Complex(Double.NaN,Double.NaN), Complex(Double.NaN,Double.NaN), Complex(Double.NaN,Double.NaN),
