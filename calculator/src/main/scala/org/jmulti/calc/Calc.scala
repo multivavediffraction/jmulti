@@ -283,12 +283,14 @@ class Calc {
         else params.psiStart + (i - 1) * (params.psiEnd - params.psiStart) / params.psiSteps
       }
 
-      val Psi = (1 to (params.psiSteps + 1) map { i =>
+      val Psi = (1 to (params.psiSteps + 1)) map { i =>
         if (params.psiSteps == 0) params.psiStart
         else params.psiStart + (i - 1) * (params.psiEnd - params.psiStart) / params.psiSteps
-      }).par
+      }
 
-      @strictfp def reducePlanes(psi: Double): (Double, Double, Double, Double, Double, Double, Double, Double, Double, Complex, Complex, Complex, Complex, Complex, Complex, Complex, (Int, Int, Int)) = {
+      type CalcResult = (Double, Double, Double, Double, Double, Double, Double, Double, Double, Complex, Complex, Complex, Complex, Complex, Complex, Complex, (Int, Int, Int))
+
+      @strictfp def reducePlanes(psi: Double): CalcResult = {
         params.sweep match {
           case ParametersSweep.PSI =>
             Logger.log(s"Psi = $psi")
