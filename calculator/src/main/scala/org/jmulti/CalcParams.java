@@ -17,9 +17,9 @@ public class CalcParams {
     public final ParametersSweep sweep;
     public final boolean parallelCalc;
 
-    public final int namax=51; // should be odd 59
-    public final int nbmax=51; // should be odd 101
-    public final int ncmax=25; // should be odd 151
+    public final int namax=101; // should be odd 59
+    public final int nbmax=101; // should be odd 101
+    public final int ncmax=101; // should be odd 151
 
     public CalcParams(double psiStart, double psiEnd, int psiSteps,
                       int h, int k, int l,
