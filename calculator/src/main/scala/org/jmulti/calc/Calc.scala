@@ -10,6 +10,9 @@ import scala.util.{Failure, Success, Try}
 import scala.collection.parallel.CollectionConverters._
 
 class Calc {
+  var force_stop = false
+  def stop_calculation(): Unit = { force_stop = true }
+
   val pi:Double = Math.PI
   @strictfp val rad:Double = Math.PI / 180.0
   val edi:Complex = Complex(0, 1)
@@ -199,6 +202,7 @@ class Calc {
       val t2 = t.reduce(sumTryComplex)
       if (t2.isFailure) {
         Logger.error(t2.failed.get.getMessage)
+        stop_calculation()
         return
       }
       val chi0 = -4.0 * pi * r0 * t2.get / (wavevec ** 2 * vol)
@@ -291,6 +295,13 @@ class Calc {
       type CalcResult = (Double, Double, Double, Double, Double, Double, Double, Double, Double, Complex, Complex, Complex, Complex, Complex, Complex, Complex, (Int, Int, Int))
 
       @strictfp def reducePlanes(psi: Double): CalcResult = {
+        if (force_stop) {
+          return (Double.NaN, Double.NaN, Double.NaN, Double.NaN, Double.NaN, Double.NaN, Double.NaN, Double.NaN,
+            Double.NaN, Complex(Double.NaN,Double.NaN), Complex(Double.NaN,Double.NaN), Complex(Double.NaN,Double.NaN),
+            Complex(Double.NaN,Double.NaN), Complex(Double.NaN,Double.NaN), Complex(Double.NaN,Double.NaN),
+            Complex(Double.NaN,Double.NaN), (Int.MinValue, Int.MinValue, Int.MinValue))
+        }
+
         params.sweep match {
           case ParametersSweep.PSI =>
             Logger.log(s"Psi = $psi")
@@ -345,6 +356,7 @@ class Calc {
 
         if (f.isFailure) {
           Logger.error(f.failed.get.getMessage)
+          stop_calculation()
           return (Double.NaN, Double.NaN, Double.NaN, Double.NaN, Double.NaN, Double.NaN, Double.NaN, Double.NaN,
             Double.NaN, Complex(Double.NaN,Double.NaN), Complex(Double.NaN,Double.NaN), Complex(Double.NaN,Double.NaN),
             Complex(Double.NaN,Double.NaN), Complex(Double.NaN,Double.NaN), Complex(Double.NaN,Double.NaN),
