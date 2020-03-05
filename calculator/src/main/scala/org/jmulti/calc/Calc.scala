@@ -216,11 +216,11 @@ class Calc {
         ah <- (-params.namax / 2) to (params.namax / 2)
         bh <- (-params.nbmax / 2) to (params.nbmax / 2)
         ch <- (-params.ncmax / 2) to (params.ncmax / 2)
-//        if 0 != ah && 0 != bh && 0 != ch // FIXME: Physical meaning of plane (000) is eluding but necessary to produce results similar to measured in experiment
+        if 0 != ah || 0 != bh || 0 != ch // FIXME: Physical meaning of plane (000) is eluding but necessary to produce results similar to measured in experiment
         ah2 = params.h - ah
         bh2 = params.k - bh
         ch2 = params.l - ch
-//        if 0 != ah2 && 0 != bh2 && 0 != ch2 // FIXME: Physical meaning of plane (000) is eluding but necessary to produce results similar to measured in experiment
+        if 0 != ah2 || 0 != bh2 || 0 != ch2 // FIXME: Physical meaning of plane (000) is eluding but necessary to produce results similar to measured in experiment
         sl1 = 0.5 * Math.sqrt(uc.d_hkl(ah, bh, ch))
         if sl1 <= 5.0 / lambda // this spherical restriction on reflections allows keeping almost exact hexagonal symmetry
         sl2 = 0.5 * Math.sqrt(uc.d_hkl(ah2, bh2, ch2))
