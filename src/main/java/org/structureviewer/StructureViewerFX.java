@@ -9,6 +9,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.jmulti.Locale;
+import org.jmulti.Logger;
 
 import java.io.IOException;
 import java.net.URL;
@@ -17,6 +19,8 @@ import java.util.ResourceBundle;
 public class StructureViewerFX extends Application {
     @Override
     public void start(Stage stage) {
+        var localizationBundle = ResourceBundle.getBundle("org.structureviewer.StructureViewer");
+        Locale.setTranslator((key, parameters) -> String.format(localizationBundle.getString(key), parameters));
         // Get the pre-configured controller factory:
         FXActionManager myActionControllerFactory = ValidatorService.createActionManager();
 
@@ -24,13 +28,12 @@ public class StructureViewerFX extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader();
         URL url = getClass().getResource("StructureViewer.fxml");
         if(null == url) {
-            System.out.println("Can't open fxml resource");
+            Logger.error(Locale.getMessage("gui.init.fxml.not.found"));
             stage.close();
             return;
         }
         fxmlLoader.setLocation(url);
-        var localozationBundle = ResourceBundle.getBundle("org.structureviewer.StructureViewer");
-        fxmlLoader.setResources(localozationBundle);
+        fxmlLoader.setResources(localizationBundle);
         fxmlLoader.setControllerFactory(myActionControllerFactory);
 
         try {
@@ -42,7 +45,7 @@ public class StructureViewerFX extends Application {
             scene.getStylesheets().add("/com/aeonium/javafx/validation/aeFXValidation.css");
 
             // Load and set the resource bundle
-            ValidatorService.setBundle(localozationBundle);
+            ValidatorService.setBundle(localizationBundle);
 
             // Register all Label instances with the LabelService
             LabelService.initialize(scene);
@@ -55,8 +58,7 @@ public class StructureViewerFX extends Application {
             }
             stage.show();
         } catch (IOException ex) {
-            System.out.print("Failed to load fxml resource: ");
-            System.out.println(ex.getMessage());
+            Logger.error(Locale.getMessage("gui.init.fxml.read.failed", ex.getMessage()));
         }
     }
 

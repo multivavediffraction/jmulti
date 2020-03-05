@@ -33,4 +33,6 @@
     <entry key="table.column.z">z</entry>
     <entry key="progressDone">Done in %s</entry>
     <entry key="progressEstimation">Elapsed time: %s, estimated total: %s (left: %s)</entry>
+    <entry key="gui.init.fxml.not.found">Can't open fxml resource</entry>
+    <entry key="gui.init.fxml.read.failed">Failed to load fxml resource: %s</entry>
 </properties>
