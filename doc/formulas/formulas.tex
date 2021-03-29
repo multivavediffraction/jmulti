@@ -1,0 +1,242 @@
+% !Mode:: "TeX:UTF-8"
+% !Tex spellcheck = ru-RU
+% !TEX  program = xelatex
+
+\documentclass[12pt,a4paper,draft]{article}
+
+\usepackage{csquotes}
+
+\usepackage{polyglossia}
+\setdefaultlanguage{russian}
+\setotherlanguages{english}
+
+%\defaultfontfeatures{Ligatures={TeX},Renderer=Basic}
+\defaultfontfeatures{Ligatures={TeX}}
+\setmainfont{Times New Roman}
+
+\usepackage{amsmath}
+\newcommand{\angstrom}{\textup{\AA}}
+
+\usepackage[
+backend=biber,
+style=numeric,
+sorting=none
+]{biblatex}
+\addbibresource{formulas.bib}
+
+\title{Формулы расчёта в jmulti}
+\author{С.~В.~Иванов}
+\date{январь 2021}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\begin{abstract}
+    В этой статье приведена математическая запись формул по которым ведется
+    вычисление интенсивности двухволновой дифракции.
+\end{abstract}
+
+\section{Атомный фактор}
+
+Для расчёта атомного фактора используются данные из международных
+кристаллографических таблиц, том C \cite{itcC}
+
+
+Из таблицы 4.2.6.8 (\textenglish{Dispersion corrections for forward scattering})
+берутся поправочные коэффициенты $f'$ и $f''$. Для промежуточных значений длины
+волны используется линейная интерполяция табличных значений.
+
+
+В зависимости от значения величины $ \sin \theta / \lambda $ для расчёта атомного
+фактора использются разные таблицы.
+Для интервала $ 0 <= \sin \theta / \lambda <= 2.0 $ используется таблица
+6.1.1.4 (\textenglish{Coefficients for analytical approximation to the scattering
+factors of Tables 6.1.1.1 and 6.1.1.2}) и формула:
+
+\begin{equation}
+    f(\sin \theta  / \lambda) = \sum_{i=1}^{4} a_i \exp(-b_i(\sin \theta / \lambda)^2) + c
+\end{equation}
+
+Для интервала $ 2.0 < \sin \theta / \lambda $ используется таблица 6.1.1.5
+(\textenglish{Coefficients for analytical approximation to the
+scattering factors of Table 6.1.1.1 for the range
+$2.0 <\sin \theta / \lambda < 6.0~\angstrom^{-1}$}) и формула:
+
+\begin{equation}
+    f(\sin \theta / \lambda) = \sum_{i=0}^{3} a_i (\sin \theta / \lambda)^i
+\end{equation}
+
+Величина $ \sin \theta / \lambda $ рассчитывается из условия Брегга по формуле:
+
+\begin{equation}
+    \sin \theta / \lambda = \frac{\sqrt{d_{hkl}}}{2},
+\end{equation}
+
+где $ d_{hkl} $ обратный квадрат расстояния между кристаллографическими плоскостями соответствующих индексам Миллера $hkl$.
+
+\begin{multline}
+    d_{hkl} = \frac{ \left( \frac{h \sin \alpha}{a} \right)^2 +
+    \left( \frac{k \sin \beta}{b} \right)^2 +
+    \left( \frac{l \sin \gamma}{c} \right)^2 +
+    \frac{2kl \cos \alpha}{bc} +
+    \frac{2hl \cos \beta}{ac} +
+    \frac{2hk \cos \gamma}{ab} }
+    {1 - \cos^2 \alpha - \cos^2 \beta -
+    \cos^2 \gamma + 2 \cos \alpha \cos \beta \cos \gamma}
+\end{multline}
+
+\begin{multline}
+    ( \frac{h * h * \sin \alpha * \sin \alpha}{a * a} +
+    \frac{k * k * \sin \beta * \sin \beta}{b * b} +
+    \frac{l * l * \sin \gamma * \sin \gamma}{c * c} + \\
+    \frac{2 * k * l * \cos \alpha}{b * c} +
+    \frac{2 * h * l * \cos \beta}{a * c} +
+    \frac{2 * h * k * \cos \gamma}{a * b} ) \\ /
+        (1 - \cos \alpha * \cos \alpha - \cos \beta * \cos \beta -
+        \cos \gamma * \cos \gamma + 2 * \cos \alpha * \cos \beta * \cos \gamma)
+\end{multline}
+
+Итоговый атомный фактор это комплексное число образованное суммой $ f + f' +if'' $.
+
+\begin{equation}
+    f_a = f + f' + if''
+\end{equation}
+
+\section{Структурный фактор}
+
+Структурный фактор отражения от плоскости вычисляется по формуле:
+
+\begin{equation}
+    F_{hkl} = \sum_{a} f_a e^{i \pi (hx_a + ky_a + lz_a)}
+\end{equation}
+
+где $ x, y, z $ клсталлографические координаты атома в ячейке.
+
+\section{Константы и простые соотношения}
+
+Классический радиус электрона:
+\begin{equation}
+    r_0 = 2.81794092 * 10^{-5}
+\end{equation}
+
+Длина волны из энергии в кЭв:
+\begin{equation}
+    \lambda = 12.398519 / E
+\end{equation}
+
+Угол Брегга основного рефлекса:
+\begin{equation}
+    \theta_b = \arcsin \left( \frac{\lambda \sqrt{d_{hkl} } }{2} \right)
+\end{equation}
+
+Модуль волнового вектора:
+\begin{equation}
+    k = \frac{2 \pi}{\lambda}
+\end{equation}
+
+Учет взаимодействия с магнитным полем зашит в формулы, но поле задано нулевым.
+
+\begin{align}
+    F_{Mag} &= 0 + i0 \\
+    F_{DQ} &= 0 + i \\
+    F_{QQ} &= -1 + i
+\end{align}
+
+Объем ячейки и базовые вектора обратной решетки:
+
+\begin{align}
+    V &= \vec{a} \cdot (\vec{b} \times \vec{c}) \\
+    \vec{a}_{Rec} &= \frac{2 \pi (\vec{b} \times \vec{c})}{V} \\
+    \vec{b}_{Rec} &= \frac{2 \pi (\vec{c} \times \vec{a})}{V} \\
+    \vec{c}_{Rec} &= \frac{2 \pi (\vec{a} \times \vec{b})}{V}
+\end{align}
+
+\begin{equation}
+    \chi_0 = \frac{-4 \pi r_0 \sum_{a} Z_a + f' + if''}{k^2 V}
+\end{equation}
+
+\section{Отбор пар плоскостей}
+
+Перед рассчетом интенсивности рефлекса производится выборка
+пар прлоскостей ( $abc$ плоскость первого отражения, $a'b'c'$
+плоскость второго отражения). При этом из условия что нужны только такие пары,
+которые дают рефлекс в том же направлениии, что и основной от плоскости $hkl$,
+следует, что индексы $abc$ и $a'b'c'$ связаны соотношением:
+
+\begin{equation}
+    a' = h - a, b' = k - b, c' = l - c .
+\end{equation}
+
+Таким образом выбор первой плоскости однозначно определяет и вторую плоскость.
+
+Также производится вычисление структурного фактора двойного
+отражения $ F_{hkl}^{abc} $, тут верхние индексы $abc$ использованы
+для обозначения для какой пары плоскостей вычисляется этот структурный фактор.
+
+\begin{equation}
+    F_{hkl}^{abc} = F_{abc} F_{a'b'c'}
+\end{equation}
+
+Выборка плоскостей осуществляется пребором индексов $abc$ в заданных пределах,
+в выборку попадают только плоскости удовлетворяюще условиям:
+
+\begin{align}
+    \frac{\sqrt{d_{abc}}}{2} &<= \frac{5}{\lambda} \\
+    \frac{\sqrt{d_{a'b'c'}}}{2} &<= \frac{5}{\lambda} \\
+    \lvert F_{abc} \rvert &>= 10^{-6} \\
+    \lvert F_{a'b'c'} \rvert &>= 10^{-6} \\
+    \lvert F_{hkl}^{abc} \rvert &>= 1
+\end{align}
+
+\section{Расчет интенсивности рефлексов}
+
+В расчете для упрощения формул используется локальные декартовы координаты
+с базовыми векторами $\vec{a_0}, \vec{b_0}, \vec{n}$. Выбор этих векторов зависит
+от параметров ячейки и основного рефлекса $hkl$. Подробности выбора векторов опустим,
+скажем только, что $\vec{n}$ совпадает с вектором нормали плоскости $hkl$,
+a угол $\psi$ отсчитывается от вектора $\vec{a_0}$ в направлении $\vec{b_0}$.
+
+Волновой вектор $\vec{k}$ и вектора поляризации падающего излучения
+$\vec{e_s}, \vec{e_p}$ и после рассеяного $\vec{e_p'}$:
+
+\begin{align}
+    \vec{k} &= k \left( \cos \theta_b \cos \psi \vec{a_0} + \cos \theta_b \sin \psi \vec{b_0} +- \sin \theta_b \vec{n} \right) \\
+    \vec{e_s} &= - \sin \psi \vec{a_0} + \cos \psi \vec{b_0} \\
+    \vec{e_p} &= \sin \theta_b \cos \psi \vec{a_0} + \sin \theta_b \sin \psi \vec{b_0} + \cos \theta_b \\
+    \vec{e_p'} &= - \sin \theta_b \cos \psi \vec{a_0} - \sin \theta_b \sin \psi \vec{b_0} + \cos \theta_b \vec{n}
+\end{align}
+
+Здесь $a, b, c$ это индексы отобранных на предыдущем шаге прлоскостей.
+
+\begin{align}
+    \vec{p} &= a \vec{a}_{Rec} + b \vec{b}_{Rec} + c \vec{c}_{Rec} \\
+    \vec{k}_n &= \vec{k} + \vec{p} \\
+    \mathbf{k}_n^2 & = \lvert \vec{k} + \vec{p} \rvert \\
+    k_{ns} &= \vec{k}_n \cdot \vec{e_s} \\
+    k_{np} &= \vec{k}_n \cdot \vec{e_p} \\
+    k_{np}' &= \vec{k}_n \cdot \vec{e_p'} \\
+    F_{Mult}^{ss} &= \frac{4 \pi r_0}{k^2 V} \sum_{abc} \frac{F_{hkl}^{abc} (\vec{k}_n^2 - k_{ns}^2)}{\vec{k}_n^2 (1 - \chi_0) - k^2} \\
+    F_{Mult}^{pp} &= \frac{4 \pi r_0}{k^2 V} \sum_{abc} \frac{F_{hkl}^{abc} (\vec{k}_n^2 \cos 2\theta_b - k_{np}k_{np}')}{\vec{k}_n^2 (1 - \chi_0) - k^2} \\
+    F_{Mult}^{ps} &= - \frac{4 \pi r_0}{k^2 V} \sum_{abc} \frac{F_{hkl}^{abc} k_{np}'k_{ns}}{\vec{k}_n^2 (1 - \chi_0) - k^2} \\
+    F_{Mult}^{sp} &= - \frac{4 \pi r_0}{k^2 V} \sum_{abc} \frac{F_{hkl}^{abc} k_{ns}k_{np}}{\vec{k}_n^2 (1 - \chi_0) - k^2} \\
+\end{align}
+
+\begin{align}
+    c_{QQ} &= F_{QQ} \sin 3 \psi \\
+    \lvert F_{Mod}^{ss} \rvert &= \lvert F_{Mult}^{ss} + F_{Mag} \rvert \\
+    \lvert F_{Mod}^{pp} \rvert &= \lvert F_{Mult}^{pp} + F_{Mag} \rvert \\
+    \lvert F_{Mod}^{ps} \rvert &= \lvert F_{Mult}^{ps} - F_{Mag} + c_{QQ} + F_{DQ} \rvert \\
+    \lvert F_{Mod}^{sp} \rvert &= \lvert F_{Mult}^{sp} + F_{Mag} + c_{QQ} - F_{DQ} \rvert \\
+    F_{Mod}^s &= \lvert F_{Mod}^{ps} \rvert^2 + \lvert F_{Mod}^{ss} \rvert^2 \\
+    F_{Mod}^p &= \lvert F_{Mod}^{pp} \rvert^2 + \lvert F_{Mod}^{sp} \rvert^2 \\
+    Rr2 &= \frac{\lvert F_{Mult}^{ss} + i F_{Mult}^{sp} - i F_{Mag} \rvert^2 + \lvert i F_{Mult}^{pp} + F_{Mult}^{ps} + F_{Mag}} \rvert^2{2} \\
+    Rl2 &= \frac{\lvert F_{Mult}^{ss} - i F_{Mult}^{sp} + i F_{Mag} \rvert^2 + \lvert -i F_{Mult}^{pp} + F_{Mult}^{ps} + F_{Mag} \rvert^2}{2}
+\end{align}
+
+\printbibliography
+
+\end{document}
+
