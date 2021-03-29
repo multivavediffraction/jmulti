@@ -17,14 +17,15 @@ public class CalcParams {
     public final ParametersSweep sweep;
     public final boolean parallelCalc;
 
-    public final int namax=101; // should be odd 59
-    public final int nbmax=101; // should be odd 101
-    public final int ncmax=101; // should be odd 151
+    public final int hrange; // should be odd 59
+    public final int krange; // should be odd 101
+    public final int lrange; // should be odd 151
 
     public CalcParams(double psiStart, double psiEnd, int psiSteps,
                       int h, int k, int l,
                       double energyStart, double energyEnd, int energySteps,
-                      String title, ParametersSweep sweep, boolean parallelCalc)
+                      String title, ParametersSweep sweep, boolean parallelCalc,
+                      int hrange, int krange, int lrange)
     {
         this.psiStart = psiStart;
         this.psiEnd = psiEnd;
@@ -38,5 +39,8 @@ public class CalcParams {
         this.title = title;
         this.sweep = sweep;
         this.parallelCalc = parallelCalc;
+        this.hrange = hrange;
+        this.krange = krange;
+        this.lrange = lrange;
     }
 }

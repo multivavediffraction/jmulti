@@ -18,6 +18,10 @@ public class ParametersPane {
     private JTextField energyField = new JTextField();
     private JTextField titleField = new JTextField();
 
+    private JTextField hrange = new JTextField();
+    private JTextField krange = new JTextField();
+    private JTextField lrange = new JTextField();
+
     public void setParams(CalcParams params) {
         hField.setText(String.valueOf(params.h));
         kField.setText(String.valueOf(params.k));
@@ -29,6 +33,10 @@ public class ParametersPane {
 
         energyField.setText(String.valueOf(params.energyStart));
         titleField.setText(params.title);
+
+        hrange.setText(String.valueOf(params.hrange));
+        krange.setText(String.valueOf(params.krange));
+        lrange.setText(String.valueOf(params.lrange));
     }
 
     public CalcParams getParams(){
@@ -43,7 +51,10 @@ public class ParametersPane {
                 0.0, 0,
                 titleField.getText(),
                 ParametersSweep.PSI,
-                false
+                false,
+                Integer.parseInt(hrange.getText()),
+                Integer.parseInt(krange.getText()),
+                Integer.parseInt(lrange.getText())
         );
     }
 

@@ -4,7 +4,7 @@
  - Switched to JavaFX UI from Swing
 0.4
  - Loop calculation over beam energy
- - Added ability to calcuulate 2d field over energy and psi
+ - Added ability to calculate 2d field over energy and psi
  - Added capability to select one of predefined structure and simulation parameters
  - Added view with 3d structure of atoms
 0.5
@@ -13,3 +13,5 @@
  - Simplified distribution
 0.6
 
+0.9.2
+ - Added ability to edit planes search range

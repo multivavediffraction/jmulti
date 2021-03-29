@@ -107,6 +107,16 @@ public class StructureViewerController implements Initializable {
 
     @FXML private StructSceneController structSceneController;
 
+    @FXML private Label hrangeLabel;
+    @FXNumber(validation = NumberFormatterValidator.class)
+    @FXML private TextField hrangeInput;
+    @FXML private Label krangeLabel;
+    @FXNumber(validation = NumberFormatterValidator.class)
+    @FXML private TextField krangeInput;
+    @FXML private Label lrangeLabel;
+    @FXNumber(validation = NumberFormatterValidator.class)
+    @FXML private TextField lrangeInput;
+
     @FXValidationChecked
     private BooleanProperty isValidated = new SimpleBooleanProperty(true);
     private BooleanProperty isComputing = new SimpleBooleanProperty(false);
@@ -114,6 +124,10 @@ public class StructureViewerController implements Initializable {
     private IntegerProperty h = new SimpleIntegerProperty(0);
     private IntegerProperty k = new SimpleIntegerProperty(0);
     private IntegerProperty l = new SimpleIntegerProperty(1);
+
+    private IntegerProperty hrange = new SimpleIntegerProperty(25);
+    private IntegerProperty krange = new SimpleIntegerProperty(25);
+    private IntegerProperty lrange = new SimpleIntegerProperty(25);
 
     private ObjectProperty<ParametersSweep> sweep = new SimpleObjectProperty<>(ParametersSweep.PSI);
     private BooleanProperty parallelCalc = new SimpleBooleanProperty(false);
@@ -235,6 +249,9 @@ public class StructureViewerController implements Initializable {
         hInputLabel.setLabelFor(hInput);
         kInputLabel.setLabelFor(kInput);
         lInputLabel.setLabelFor(lInput);
+        hrangeLabel.setLabelFor(hrangeInput);
+        krangeLabel.setLabelFor(krangeInput);
+        lrangeLabel.setLabelFor(lrangeInput);
         psiStartLabel.setLabelFor(psiStartInput);
         psiEndLabel.setLabelFor(psiEndInput);
         psiStepsLabel.setLabelFor(psiStepsInput);
@@ -252,9 +269,13 @@ public class StructureViewerController implements Initializable {
 
         calculateBtn.disableProperty().bind(isValidated.not().or(isComputing));
 
-        hInput.textProperty().bindBidirectional(h, new NumberStringConverter());
-        kInput.textProperty().bindBidirectional(k, new NumberStringConverter());
-        lInput.textProperty().bindBidirectional(l, new NumberStringConverter());
+        hInput.textProperty().bindBidirectional(h, new NumberStringConverter("#####0"));
+        kInput.textProperty().bindBidirectional(k, new NumberStringConverter("#####0"));
+        lInput.textProperty().bindBidirectional(l, new NumberStringConverter("#####0"));
+
+        hrangeInput.textProperty().bindBidirectional(hrange, new NumberStringConverter("#####0"));
+        krangeInput.textProperty().bindBidirectional(krange, new NumberStringConverter("#####0"));
+        lrangeInput.textProperty().bindBidirectional(lrange, new NumberStringConverter("#####0"));
 
         psiStartInput.textProperty().bindBidirectional(psiStart, new NumberStringConverter());
         psiEndInput.textProperty().bindBidirectional(psiEnd, new NumberStringConverter());
@@ -333,6 +354,10 @@ public class StructureViewerController implements Initializable {
         h.set(params.h);
         k.set(params.k);
         l.set(params.l);
+
+        hrange.set(params.hrange);
+        krange.set(params.krange);
+        lrange.set(params.lrange);
 
         psiStart.set(params.psiStart);
         psiEnd.set(params.psiEnd);
@@ -540,7 +565,8 @@ public class StructureViewerController implements Initializable {
         var parameters = new CalcParams(psiStart.get(), psiEndValue, psiStepsValue,
                 h.get(), k.get(), l.get(),
                 energyStart.get(), energyEndValue,  energyStepsValue,
-                title.get(), sweep.get(), parallelCalcValue);
+                title.get(), sweep.get(), parallelCalcValue,
+                hrange.get(), krange.get(), lrange.get());
         var unitCell = new UnitCell(a.get(), b.get(), c.get(), alpha.get(), beta.get(), gamma.get());
         var atomsCollection = atomsDataTable.getItems();
 

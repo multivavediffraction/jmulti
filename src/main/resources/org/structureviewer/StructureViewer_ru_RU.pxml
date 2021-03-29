@@ -35,4 +35,11 @@
     <entry key="progressEstimation">Прошло времени: %s, оценка полного времени: %s (осталось: %s)</entry>
     <entry key="gui.init.fxml.not.found">Не найден ресурс fxml</entry>
     <entry key="gui.init.fxml.read.failed">Ошибка при загрузке ресурса fxml: %s</entry>
+    <entry key="search.range.descr">Перебор от отрицательного, до положительного значения:</entry>
+    <entry key="search.hrange">Диапазон h</entry>
+    <entry key="search.krange">Диапазон k</entry>
+    <entry key="search.lrange">Диапазон l</entry>
+    <entry key="io.pane.title">Чтение/Запись файла</entry>
+    <entry key="calc.pane.title">Параметры расчета</entry>
+    <entry key="struct.pane.title">Параметры стуктуры</entry>
 </properties>
