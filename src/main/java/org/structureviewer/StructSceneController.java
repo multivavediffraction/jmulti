@@ -1,13 +1,13 @@
 package org.structureviewer;
 
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+//import javafx.beans.binding.Bindings;
+//import javafx.beans.property.IntegerProperty;
+//import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.*;
-import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
+//import javafx.scene.control.Label;
+//import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Material;
@@ -25,12 +25,12 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public class StructSceneController implements Initializable {
-    @FXML private Label unitCellsDisplay;
-    @FXML private Slider unitCellsSlider;
+//    @FXML private Label unitCellsDisplay;
+//    @FXML private Slider unitCellsSlider;
     @FXML private SubScene scene;
     @FXML private Group world;
 
-    private IntegerProperty unitCellsCount = new SimpleIntegerProperty(1);
+//    private IntegerProperty unitCellsCount = new SimpleIntegerProperty(1);
 
     private Map<String, Material> materials = new HashMap<>();
 
@@ -44,8 +44,8 @@ public class StructSceneController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        unitCellsSlider.valueProperty().bindBidirectional(unitCellsCount);
-        unitCellsDisplay.textProperty().bind(Bindings.format("Number of unit cells: %d", unitCellsCount));
+//        unitCellsSlider.valueProperty().bindBidirectional(unitCellsCount);
+//        unitCellsDisplay.textProperty().bind(Bindings.format("Number of unit cells: %d", unitCellsCount));
 
         Camera cam = new PerspectiveCamera(true);
         cam.setTranslateZ(-50);

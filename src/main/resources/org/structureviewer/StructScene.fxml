@@ -7,8 +7,10 @@
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Label?>
 <VBox spacing="3.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.structureviewer.StructSceneController">
+    <!--
     <Label fx:id="unitCellsDisplay" text="Number of unit cells: 1" />
     <Slider fx:id="unitCellsSlider" blockIncrement="1.0" majorTickUnit="1.0" min="1.0" max="10.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" />
+    -->
     <SubScene fx:id="scene" depthBuffer="true" fill="black" height="400.0" onMouseDragged="#mouseDragged" onMouseMoved="#mouseMoved" width="400.0" VBox.vgrow="ALWAYS">
         <antiAliasing>
             <SceneAntialiasing fx:constant="BALANCED" />
