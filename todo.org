@@ -1,0 +1,19 @@
+#+TITLE: Ideas and TODOs for future program improvement
+
+* Current tasks [1/9]
+** STRT Finish document describing coordinate system
+** DONE Make math formula description from code
+** TODO Make use of algebra library breeze
+** TODO Finish transition to OpenCL calculation
+** TODO Add magnetic field settings
+** TODO Add settings save/load
+** TODO Make transition to real OpenGL render from JavaFX built-in one
+** TODO Add atoms parameters table editing
+*** TODO Highlight selected atoms on structure render
+*** TODO Render full unit cell instead of only nontranslated
+** TODO Look into better scaling on multiple cores
+* Future enhancements [0/4]
+** TODO Add nonuniform mesh support to automatically refine picture near peaks
+** TODO Add spatial scan with fixed energy
+** TODO Add rendering of result
+** TODO Add sequential refining calculation, like progressive jpeg
