@@ -32,7 +32,7 @@ object DispersionCorrectionFS {
     val stream = new FileInputStream(file)
     if (null != stream) {
       using(Source.fromInputStream(stream)) { source => {
-        val lines = source.getLines.zipWithIndex.toList
+        val lines = source.getLines().zipWithIndex.toList
         val energies = lines.head._1.split(";").drop(2).map(double(1))
         val even = lines.tail.filter { case (_, i) => i % 2 == 0 }
         val odd = lines.tail.filter { case (_, i) => i % 2 == 1 }

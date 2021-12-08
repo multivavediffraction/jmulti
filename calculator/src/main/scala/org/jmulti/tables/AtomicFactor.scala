@@ -21,7 +21,7 @@ object AtomicFactor {
     val stream = new FileInputStream(file)
     if (null != stream) {
       using(Source.fromInputStream(stream)) { source => {
-        source.getLines.zipWithIndex.drop(1).toList map f
+        source.getLines().zipWithIndex.drop(1).toList map f
       }}
     } else {
       Logger.log(s"Failed to read $file")
