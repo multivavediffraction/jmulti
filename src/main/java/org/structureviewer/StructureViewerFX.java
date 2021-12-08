@@ -55,10 +55,13 @@ public class StructureViewerFX extends Application {
                 ValidatorService.validate(fxmlLoader.getController());
             } catch (ValidationException e) {
                 e.printStackTrace();
+                stage.close();
             }
             stage.show();
         } catch (IOException ex) {
+            ex.printStackTrace();
             Logger.error(Locale.getMessage("gui.init.fxml.read.failed", ex.getMessage()));
+            stage.close();
         }
     }
 
