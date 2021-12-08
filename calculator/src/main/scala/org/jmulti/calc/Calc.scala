@@ -7,7 +7,7 @@ import org.jmulti.tables.{AtomicFactor, Charge, DispersionCorrectionFS}
 
 import scala.annotation.strictfp
 import scala.util.{Failure, Success, Try}
-import scala.collection.parallel.CollectionConverters._
+//import scala.collection.parallel.CollectionConverters._
 
 class Calc {
   var force_stop = false
@@ -245,8 +245,9 @@ class Calc {
         case _ => true
       }
 
-      val factors = if (params.parallelCalc) (indices.par map calcStructFactor filter noSmallFactors).seq
-      else indices map calcStructFactor filter noSmallFactors
+      //val factors = if (params.parallelCalc) (indices.par map calcStructFactor filter noSmallFactors).seq
+      //else indices map calcStructFactor filter noSmallFactors
+      val factors = indices map calcStructFactor filter noSmallFactors
 
       Logger.incrementProgress()
 
@@ -378,7 +379,8 @@ class Calc {
         (psi, rr2, rl2, fMod2ss, fMod2pp, fMod2ps, fMod2sp, fMod2s, fMod2p, fMultss, fMultpp, fMultps, fMultsp, cQQ, fDQ, fMag, maxPlanes)
       }
 
-      val results = if (params.parallelCalc) (Psi.par map reducePlanes).seq else { Psi map reducePlanes }
+      //val results = if (params.parallelCalc) (Psi.par map reducePlanes).seq else { Psi map reducePlanes }
+      val results = Psi map reducePlanes
 
       Logger.log("Writing data")
 
