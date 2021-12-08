@@ -3,17 +3,23 @@ plugins {
     id 'application'
     id 'eclipse'
     id 'idea'
+    id 'org.openjfx.javafxplugin'
 }
 
 repositories {
     mavenCentral()
 }
 
-sourceCompatibility = 1.11
-targetCompatibility = 1.11
+sourceCompatibility = 1.17
+targetCompatibility = 1.17
 version = '0.9.3'
 def mainClass = 'org.structureviewer.Main'
 mainClassName = mainClass
+
+application {
+    mainModule = 'org.structureviewer'
+    mainClass = 'org.structureviewer.Main'
+}
 
 sourceSets {
     main {
@@ -44,30 +50,18 @@ distributions {
     }
 }
 
-dependencies {
-    compileOnly 'org.jetbrains:annotations:17.0.0'
+javafx {
+    version = "17"
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
+}
 
-    implementation 'org.openjfx:javafx-base:13.0.1'
-    implementation 'org.openjfx:javafx-base:13.0.1:win'
-    implementation 'org.openjfx:javafx-base:13.0.1:mac'
-    implementation 'org.openjfx:javafx-base:13.0.1:linux'
-    implementation 'org.openjfx:javafx-controls:13.0.1'
-    implementation 'org.openjfx:javafx-controls:13.0.1:win'
-    implementation 'org.openjfx:javafx-controls:13.0.1:mac'
-    implementation 'org.openjfx:javafx-controls:13.0.1:linux'
-    implementation 'org.openjfx:javafx-graphics:13.0.1'
-    implementation 'org.openjfx:javafx-graphics:13.0.1:win'
-    implementation 'org.openjfx:javafx-graphics:13.0.1:mac'
-    implementation 'org.openjfx:javafx-graphics:13.0.1:linux'
-    implementation 'org.openjfx:javafx-fxml:13.0.1'
-    implementation 'org.openjfx:javafx-fxml:13.0.1:win'
-    implementation 'org.openjfx:javafx-fxml:13.0.1:mac'
-    implementation 'org.openjfx:javafx-fxml:13.0.1:linux'
+dependencies {
+    compileOnly 'org.jetbrains:annotations:22.0.0'
 
     implementation project(':calculator')
     implementation project(':fx-validation')
 
-    implementation 'net.sourceforge.jmol:jmol:14.29.27'
+    implementation 'net.sourceforge.jmol:jmol:14.31.10'
 }
 
 afterEvaluate {
@@ -80,12 +74,6 @@ afterEvaluate {
         }
     }
 }
-
-//tasks.withType(JavaCompile) {
-//    doFirst {
-//        println "Args for $name are $options.allCompilerArgs"
-//    }
-//}
 
 task prepareBundles(type: Copy) {
     def destination = "$buildDir/generated/resources"
@@ -113,6 +101,6 @@ tasks.processResources.from "$buildDir/generated/resources"
 tasks.processResources.dependsOn prepareBundles
 
 wrapper {
-    gradleVersion = '5.6.3'
+    gradleVersion = '7.3.1'
 }
 

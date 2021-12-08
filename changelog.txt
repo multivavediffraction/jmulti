@@ -18,3 +18,5 @@
 
 0.9.3
  - Not working unit cell count slider is hidden
+ - Regrouped calculation parameters in titled panes
+ - Bumped gradle version to 7.3.1, jdk version to 17, javafx version to 17.0.1
