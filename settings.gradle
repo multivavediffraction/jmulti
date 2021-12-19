@@ -15,4 +15,4 @@ pluginManagement {
 
 rootProject.name = 'jmulti'
 
-include 'calculator', 'fx-validation'
+include 'calc_plugin', 'calculator', 'fx-validation'

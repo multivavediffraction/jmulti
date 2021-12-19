@@ -28,11 +28,25 @@ artifacts {
     jarFile jar
 }
 
+def moduleTask = tasks.register('module', JavaCompile) {
+    source = fileTree(dir: 'src/main/module', include: '**/*.java')
+    classpath = tasks.compileScala.classpath
+    destinationDirectory = tasks.compileScala.destinationDirectory
+}
+
+moduleTask.configure{
+    dependsOn compileScala
+}
+
+tasks.classes.dependsOn moduleTask
+
 dependencies {
     compileOnly 'org.jetbrains:annotations:22.0.0'
 
     api 'org.scala-lang:scala-library:2.13.7'
 //    api 'org.scala-lang.modules:scala-parallel-collections_2.13:1.0.4'
+
+    implementation project(':calc_plugin')
 
     testImplementation 'org.scalatest:scalatest_2.13:3.2.9'
     testImplementation 'org.scalatestplus:junit-4-13_2.13:3.2.10.0'

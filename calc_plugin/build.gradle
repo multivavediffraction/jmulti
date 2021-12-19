@@ -1,0 +1,34 @@
+plugins {
+    id 'java-library'
+    id 'base'
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = 1.17
+targetCompatibility = 1.17
+version = '0.9.3'
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Plugin specs for computation module for simulation of Bragg X-ray diffraction in crystalline structures.',
+                   'Implementation-Version': project.version,
+                   'Automatic-Module-Name': 'org.jmulti.plugins'
+    }
+}
+
+configurations {
+    jarFile
+}
+
+artifacts {
+    jarFile jar
+}
+
+dependencies {
+    compileOnly 'org.jetbrains:annotations:22.0.0'
+
+    testImplementation 'junit:junit:4.13.2'
+}

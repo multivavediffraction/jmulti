@@ -58,6 +58,7 @@ javafx {
 dependencies {
     compileOnly 'org.jetbrains:annotations:22.0.0'
 
+    implementation project(':calc_plugin')
     implementation project(':calculator')
     implementation project(':fx-validation')
 

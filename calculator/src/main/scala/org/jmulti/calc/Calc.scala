@@ -1,7 +1,8 @@
 package org.jmulti.calc
 
-import java.io.PrintWriter
+import org.jmulti.plugins.Calculator
 
+import java.io.PrintWriter
 import org.jmulti.{CalcParams, Logger, ParametersSweep, UnitCell}
 import org.jmulti.tables.{AtomicFactor, Charge, DispersionCorrectionFS}
 
@@ -9,7 +10,7 @@ import scala.annotation.strictfp
 import scala.util.{Failure, Success, Try}
 //import scala.collection.parallel.CollectionConverters._
 
-class Calc {
+class Calc extends Calculator{
   var force_stop = false
   def stop_calculation(): Unit = { force_stop = true }
 

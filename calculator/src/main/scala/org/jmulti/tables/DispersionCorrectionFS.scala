@@ -63,7 +63,7 @@ object DispersionCorrectionFS {
 
   @strictfp def interpolate(a:Double, b:Double, v:Complex, u:Complex, x:Double): Complex = {
     val t = (x-a)/(b-a)
-    t*u + (1-t)*v
+    u*t + v*(1-t)
   }
 
   def selectValues(tableRow:Array[(Double, Complex)], wavelength: Double):((Double,Complex),(Double,Complex)) = {

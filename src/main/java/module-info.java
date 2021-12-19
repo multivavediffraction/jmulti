@@ -9,6 +9,8 @@ module org.structureviewer {
         requires aeFXActions;
         requires jmol;
 
+        requires org.jmulti.plugins;
+        
         exports org.structureviewer;
         opens org.structureviewer;
 }
