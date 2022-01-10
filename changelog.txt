@@ -20,3 +20,7 @@
  - Not working unit cell count slider is hidden
  - Regrouped calculation parameters in titled panes
  - Bumped gradle version to 7.3.1, jdk version to 17, javafx version to 17.0.1
+ - Added readme, license and manual (doc/jmulti_manual_ru.pdf)
+
+0.9.4
+ -
